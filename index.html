@@ -208,7 +208,7 @@ table.t{width:100%;border-collapse:collapse;font-size:14px}
 <div id="toast"></div>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbxfzup8_kKBGjz51RhWQc-sYtrn38JiFI9vcZ2NtI41CTcAetgLFe0ngOttIcA1WpfO/exec'; // <-- อย่าลืมเปลี่ยนเป็น URL ของคุณ
+const API_URL = 'https://script.google.com/macros/s/AKfycbxfzup8_kKBGjz51RhWQc-sYtrn38JiFI9vcZ2NtI41CTcAetgLFe0ngOttIcA1WpfO/exec'; // <-- ใส่ URL ของคุณ
 const MONTHS=['ต.ค.','พ.ย.','ธ.ค.','ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.'];
 const GROUPS={
  income:{title:'รายได้ (Planfin)',type:'flow',items:[['P04','รายได้ UC'],['P05','รายได้จาก EMS'],['P06','รายได้ค่ารักษาเบิกต้นสังกัด'],['P061','รายได้ค่ารักษา อปท.'],['P07','รายได้ค่ารักษาเบิกจ่ายตรงกรมบัญชีกลาง'],['P08','รายได้ประกันสังคม'],['P09','รายได้แรงงานต่างด้าว'],['P10','รายได้ค่ารักษาและบริการอื่นๆ'],['P11','รายได้งบประมาณส่วนบุคลากร'],['P12','รายได้อื่น'],['P13','รายได้งบลงทุน']]},
@@ -289,6 +289,7 @@ function buildFilters(){
 async function handleAIImage(input){
  const file=input.files[0];if(!file)return;
  showLoading(true);
+ toast('🤖 AI กำลังอ่านรูปภาพและสกัดข้อมูล...');
  try{
   const reader=new FileReader();
   reader.readAsDataURL(file);
@@ -296,21 +297,24 @@ async function handleAIImage(input){
    const base64=reader.result.split(',')[1];
    const res=await api('parseImage',{image:base64,mimeType:file.type});
    
-   // ดึงผลลัพธ์จากโครงสร้างที่ส่งกลับมา
-   const dataObj = res.result || res.values || {};
-   const vals = dataObj.values || dataObj;
+   // ระบบแกะโครงสร้างผลลัพธ์จาก AI รองรับทุกเคส
+   const resData = res.result || res.values || res;
+   const vals = resData.values || resData;
    
    let filled=0;
-   Object.entries(vals).forEach(([c,val])=>{
-    const el=$('#in_'+c);if(el){el.value=val;filled++;}
-   });
+   if(vals && typeof vals === 'object'){
+    Object.entries(vals).forEach(([c,val])=>{
+     const el=$('#in_'+c);
+     if(el){el.value=val;filled++;}
+    });
+   }
    
-   const creds=dataObj.creditors;
-   if(creds&&Array.isArray(creds)){
+   const creds = resData.creditors;
+   if(creds && Array.isArray(creds) && creds.length > 0){
     fillCredForm(creds);
-    toast(`AI อ่านสำเร็จ: ข้อมูล ${filled} รายการ, เจ้าหนี้ ${creds.length} รายการ ✔`);
+    toast(`AI อ่านสำเร็จ: ข้อมูลเดือน ${filled} รายการ และเจ้าหนี้ ${creds.length} รายการ ✔`);
    }else{
-    toast(`AI อ่านข้อมูลสำเร็จ ${filled} รายการ ✔`);
+    toast(`AI อ่านข้อมูลเดือนสำเร็จ ${filled} รายการ ✔`);
    }
    calcTotals();
    showLoading(false);
