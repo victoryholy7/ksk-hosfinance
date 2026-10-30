@@ -35,54 +35,24 @@ main{padding:22px;max-width:1500px;margin:0 auto}
 .btn-red{color:#fff;background:linear-gradient(180deg,#fca5a5,#dc2626 55%,#991b1b);box-shadow:0 5px 0 #6b1010,0 8px 16px rgba(0,0,0,.25),inset 0 2px 1px rgba(255,255,255,.45)}
 .btn-red:active{box-shadow:0 1px 0 #6b1010}
 .btn-ghost{color:#fff;background:linear-gradient(180deg,rgba(255,255,255,.28),rgba(255,255,255,.06));box-shadow:0 4px 0 rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.2)}
-.btn-ghost.active{color:#3d2c00;background:linear-gradient(180deg,#fff6cc,#f5d76e 45%,#d4af37);box-shadow:0 4px 0 #8a6a00,inset 0 2px 1px rgba(255,255,255,.8)}
 .btn.big{padding:14px 26px;font-size:17px;border-radius:18px}
 .btn.sm{padding:6px 10px;font-size:13px;border-radius:10px}
 .tabs{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0}
-.tab{border:none;cursor:pointer;font-size:15px;font-weight:500;padding:11px 18px;border-radius:14px;color:#ecfdf5;background:linear-gradient(180deg,#1f7a4d,#14532d);box-shadow:0 5px 0 #052e22,0 8px 14px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.3);transition:.08s}
-.tab:active{transform:translateY(4px);box-shadow:0 1px 0 #052e22}
+.tab{border:none;cursor:pointer;font-size:15px;font-weight:500;padding:11px 18px;border-radius:14px;color:#ecfdf5;background:linear-gradient(180deg,#1f7a4d,#14532d);box-shadow:0 5px 0 #052e22,0 8px 14px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.3)}
 .tab.active{color:#3d2c00;background:linear-gradient(180deg,#fff6cc,#f5d76e 40%,#d4af37);box-shadow:0 5px 0 #8a6a00,0 8px 14px rgba(0,0,0,.25),inset 0 2px 1px rgba(255,255,255,.85)}
 .card{background:linear-gradient(180deg,rgba(255,255,255,.97),rgba(255,253,244,.95));border-radius:20px;padding:20px;box-shadow:0 12px 34px rgba(0,0,0,.22);border:1px solid rgba(212,175,55,.4);margin-bottom:18px}
 .card h3{font-size:18px;color:var(--g2);margin-bottom:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .card h3::after{content:'';flex:1;height:3px;border-radius:3px;background:linear-gradient(90deg,var(--au3),transparent);min-width:40px;order:5}
-.sec-title{color:#fff;font-size:22px;margin:6px 0 14px;text-shadow:0 2px 8px rgba(0,0,0,.4)}
 .grid{display:grid;gap:18px;margin-bottom:18px}
 .g-kpi{grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
 .g2{grid-template-columns:repeat(auto-fit,minmax(min(100%,460px),1fr))}
 .chart-box{position:relative;height:320px}
-.kpi{position:relative;overflow:hidden;border-radius:20px;padding:18px;color:#fff;box-shadow:0 10px 24px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.35);min-height:150px}
-.kpi::before{content:'';position:absolute;right:-40px;top:-40px;width:140px;height:140px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.28),transparent 70%)}
-.kpi .ic{font-size:26px;position:absolute;right:16px;top:14px}
-.kpi .label{font-size:14px;font-weight:600}
-.kpi .value{font-size:26px;font-weight:700;margin:6px 0 8px}
-.kpi .sub{font-size:13px;line-height:1.9}
-.kpi.green{background:linear-gradient(135deg,#065f46,#10b981)}
-.kpi.dark{background:linear-gradient(135deg,#052e22,#1f7a4d)}
-.kpi.gold{background:linear-gradient(135deg,#8a6a00,#d4af37 55%,#f5d76e);color:#2b1f00}
-.kpi.teal{background:linear-gradient(135deg,#134e4a,#0d9488)}
-.kpi.red{background:linear-gradient(135deg,#7f1d1d,#dc2626)}
-.kpi.brown{background:linear-gradient(135deg,#713f12,#b45309)}
-.chip{display:inline-block;padding:1px 8px;border-radius:999px;font-weight:700;font-size:12px;margin-right:4px}
-.chip.up{background:#d1fae5;color:#065f46}.chip.down{background:#fee2e2;color:#991b1b}.chip.nt{background:#e2e8f0;color:#334155}
 .filterbar{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;background:linear-gradient(135deg,rgba(255,255,255,.16),rgba(255,255,255,.06));border:1px solid rgba(245,215,110,.45);backdrop-filter:blur(10px);border-radius:20px;padding:14px 18px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
 .f label{display:block;font-size:13px;color:#fde68a;margin-bottom:4px;font-weight:600}
 .filterbar .actions{margin-left:auto;display:flex;gap:10px;flex-wrap:wrap}
 select,input,textarea{font-family:Sarabun;font-size:15px;padding:9px 12px;border-radius:12px;border:1px solid #d6c27a;background:linear-gradient(180deg,#fff,#fffbea);box-shadow:inset 0 2px 4px rgba(0,0,0,.08);outline:none;color:var(--ink)}
 select:focus,input:focus,textarea:focus{border-color:var(--au3);box-shadow:0 0 0 3px rgba(212,175,55,.3)}
-.riskbanner{margin-top:18px;border-radius:26px;padding:20px 26px;display:flex;flex-wrap:wrap;align-items:center;gap:26px;color:#fff;background:linear-gradient(120deg,var(--rc),var(--rc2));box-shadow:0 14px 34px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.35);border:2px solid rgba(255,255,255,.4);position:relative;overflow:hidden}
-.riskbanner::after{content:'';position:absolute;right:-80px;top:-80px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.25),transparent 70%)}
-.rb-num{width:180px;height:180px;flex:none;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle at 30% 25%,rgba(255,255,255,.5),rgba(255,255,255,.08) 62%);box-shadow:inset 0 -10px 20px rgba(0,0,0,.25),0 10px 24px rgba(0,0,0,.3);border:4px solid rgba(255,255,255,.75);font-family:Prompt}
-.rb-num small{font-size:13px;letter-spacing:2px;font-weight:600}
-.rb-num b{font-size:100px;line-height:.95;text-shadow:0 4px 12px rgba(0,0,0,.4)}
-.rb-num span{font-size:17px;opacity:.95}
-.rb-info{flex:1;min-width:260px;z-index:1}
-.rb-tag{font-size:15px;opacity:.95}
-.rb-info h2{font-size:clamp(26px,3.4vw,40px);text-shadow:0 2px 8px rgba(0,0,0,.35);margin:4px 0}
-.rb-chip{display:inline-block;margin:8px 8px 0 0;padding:6px 14px;border-radius:999px;background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.5);font-weight:600;font-size:15px}
-.rb-strip{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;min-width:300px;z-index:1}
-.rb-strip div{text-align:center;border-radius:10px;padding:4px 2px;font-size:12px;background:rgba(0,0,0,.2)}
-.rb-strip div b{display:block;font-size:20px;font-family:Prompt;border-radius:8px;margin-top:2px;box-shadow:inset 0 -3px 0 rgba(0,0,0,.2)}
-.rb-strip div.cur{outline:3px solid #fff}
+.riskbanner{margin-top:18px;border-radius:26px;padding:20px 26px;display:flex;flex-wrap:wrap;align-items:center;gap:26px;color:#fff;background:linear-gradient(120deg,var(--rc),var(--rc2));box-shadow:0 14px 34px rgba(0,0,0,.3);border:2px solid rgba(255,255,255,.4)}
 .tbl-wrap{overflow:auto;border-radius:14px;max-height:75vh}
 table.t{width:100%;border-collapse:collapse;font-size:14px}
 .t th{background:linear-gradient(180deg,#14532d,#0b3d2e);color:#fff3c4;padding:10px;position:sticky;top:0;font-weight:500;z-index:1}
@@ -90,43 +60,28 @@ table.t{width:100%;border-collapse:collapse;font-size:14px}
 .t tr:nth-child(even) td{background:#fcfaf1}
 .t td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 .t tr.total td{background:linear-gradient(90deg,#fef3c7,#fde68a)!important;font-weight:700}
-.t tr.sec td{background:linear-gradient(90deg,#d1fae5,#ecfdf5)!important;font-weight:700;color:#065f46}
-.pos{color:var(--ok);font-weight:600}.neg{color:var(--red);font-weight:600}
-.cbad{color:#b91c1c!important;font-weight:700;background:#fee2e2!important}
-.badge{padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700}
-.badge.ok{background:#d1fae5;color:#065f46}.badge.no{background:#fee2e2;color:#991b1b}
 .ins{list-style:none;display:grid;gap:10px}
 .ins li{padding:10px 14px;border-radius:12px;border-left:5px solid #64748b;background:#f8fafc;line-height:1.6}
-.ins li.good{border-color:#10b981;background:#ecfdf5}.ins li.bad{border-color:#dc2626;background:#fef2f2}.ins li.warn{border-color:#f59e0b;background:#fffbeb}
-.narr h4{color:#14532d;margin:16px 0 6px;font-size:17px;padding-left:10px;border-left:5px solid #d4af37}
-.narr h4:first-child{margin-top:0}
-.narr p{text-indent:2.5em;line-height:2;font-size:16px;margin-bottom:10px;text-align:justify}
-.chk{display:flex;align-items:center;gap:6px;font-size:14px;color:var(--g2);font-weight:600}
 .login{max-width:420px;margin:40px auto;text-align:center}
 .login input{width:100%;margin:14px 0}
 .formbar{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin-bottom:14px}
 .formbar label{font-size:13px;font-weight:600;color:var(--g2);display:block;margin-bottom:4px}
 .fgroup{border:1px solid #e9dca8;border-radius:16px;margin-bottom:12px;background:#fffdf5;overflow:hidden}
 .fgroup summary{cursor:pointer;padding:12px 16px;font-family:Prompt;font-weight:600;color:#fff;background:linear-gradient(90deg,#14532d,#1f7a4d 60%,#a67c00);display:flex;justify-content:space-between;list-style:none}
-.fgroup summary::-webkit-details-marker{display:none}
 .gt{color:#fde68a}
 .fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr));gap:10px 18px;padding:16px}
 .fi{display:flex;flex-direction:column;gap:4px;font-size:14px}.fi b{color:var(--g3)}.fi input{text-align:right}
 .savebar{display:flex;gap:12px;flex-wrap:wrap;justify-content:flex-end;position:sticky;bottom:10px;padding:12px;border-radius:16px;background:rgba(255,255,255,.94);box-shadow:0 8px 24px rgba(0,0,0,.2);margin-top:10px}
 .note{font-size:13px;color:var(--muted);margin-top:6px}
 .status-line{padding:8px 12px;border-radius:10px;background:#fef9c3;color:#713f12;font-size:14px;margin-bottom:12px}
-textarea{width:100%;min-height:90px;font-family:monospace}
 .credtbl input{width:100%}
 #loading{position:fixed;inset:0;background:rgba(5,46,34,.55);backdrop-filter:blur(3px);display:none;place-items:center;z-index:100}
 #loading.show{display:grid}
 .spinner{width:64px;height:64px;border-radius:50%;border:6px solid rgba(255,255,255,.25);border-top-color:#f5d76e;animation:spin 1s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-#toast{position:fixed;right:20px;bottom:20px;z-index:110;padding:14px 20px;border-radius:14px;color:#fff;font-weight:600;background:linear-gradient(135deg,#065f46,#10b981);box-shadow:0 10px 24px rgba(0,0,0,.3);transform:translateY(200%);transition:.3s;max-width:90vw}
+#toast{position:fixed;right:20px;bottom:20px;z-index:110;padding:14px 20px;border-radius:14px;color:#fff;font-weight:600;background:linear-gradient(135deg,#065f46,#10b981);box-shadow:0 10px 24px rgba(0,0,0,.3);transform:translateY(200%);transition:.3s}
 #toast.show{transform:none}#toast.err{background:linear-gradient(135deg,#7f1d1d,#dc2626)}
-.dash-panel{display:none}.dash-panel.show,body.printing .dash-panel{display:block}
-.admin-panel{display:none}.admin-panel.show{display:block}
-.print-only{display:none}
-@media(max-width:700px){main{padding:12px}.kpi .value{font-size:21px}.chart-box{height:280px}.t1{font-size:15px}}
+.dash-panel,.admin-panel{display:none}.dash-panel.show,.admin-panel.show{display:block}
 </style>
 </head>
 <body>
@@ -137,16 +92,15 @@ textarea{width:100%;min-height:90px;font-family:monospace}
     <div><div class="t1">ระบบสารสนเทศการเงินการคลัง</div><div class="t2">โรงพยาบาลเขาสุกิม จ.จันทบุรี</div></div>
   </div>
   <nav class="nav">
-    <button class="btn btn-ghost" data-nav="home" onclick="go('home')">🏠 หน้าหลัก</button>
-    <button class="btn btn-ghost" data-nav="dash" onclick="go('dash')">📊 Dashboard ผู้บริหาร</button>
-    <button class="btn btn-ghost" data-nav="admin" onclick="go('admin')">🔐 Admin</button>
+    <button class="btn btn-ghost" onclick="go('home')">🏠 หน้าหลัก</button>
+    <button class="btn btn-ghost" onclick="go('dash')">📊 Dashboard ผู้บริหาร</button>
+    <button class="btn btn-ghost" onclick="go('admin')">🔐 Admin</button>
   </nav>
 </header>
 
 <main>
-<!-- ================= HOME ================= -->
 <section id="v-home" class="view show">
-  <div class="hero" style="text-align:center;color:#fff;padding:30px 10px">
+  <div style="text-align:center;color:#fff;padding:30px 10px">
     <h1>ระบบสารสนเทศข้อมูลการเงินโรงพยาบาล</h1>
     <p style="color:#d1fae5">ติดตามรายได้–ค่าใช้จ่าย แผน Planfin เงินบำรุง เจ้าหนี้ และวิกฤติการเงิน 7 ระดับ</p>
     <div style="display:flex;justify-content:center;gap:20px;margin-top:30px">
@@ -156,7 +110,6 @@ textarea{width:100%;min-height:90px;font-family:monospace}
   </div>
 </section>
 
-<!-- ================= DASHBOARD ================= -->
 <section id="v-dash" class="view">
   <div class="filterbar">
     <div class="f"><label>ปีงบประมาณ</label><select id="fYear" onchange="onFilter('y')"></select></div>
@@ -164,10 +117,8 @@ textarea{width:100%;min-height:90px;font-family:monospace}
     <div class="f"><label>มุมมองตัวเลข</label>
       <select id="fMode" onchange="onFilter()">
         <option value="ytd">สะสมตั้งแต่ต้นปีงบ (YTD)</option>
-        <option value="qtr">ไตรมาสของเดือนที่เลือก</option>
         <option value="mon">เฉพาะเดือนที่เลือก</option>
       </select></div>
-    <div class="f"><label>เทียบกับปีงบ</label><select id="fCmp" onchange="onFilter()"></select></div>
     <div class="actions">
       <button class="btn btn-gold" onclick="loadData()">🔄 รีเฟรช</button>
       <button class="btn btn-green" onclick="window.print()">🖨️ พิมพ์หน้านี้</button>
@@ -177,56 +128,49 @@ textarea{width:100%;min-height:90px;font-family:monospace}
   <div class="tabs" id="dashTabs">
     <button class="tab active" onclick="dashTab('p-ov',this)">🏠 ภาพรวม</button>
     <button class="tab" onclick="dashTab('p-pf',this)">📋 Planfin</button>
-    <button class="tab" onclick="dashTab('p-cr',this)">🚦 วิกฤติ 7 ระดับ</button>
-    <button class="tab" onclick="dashTab('p-cash',this)">💵 เงินบำรุง</button>
     <button class="tab" onclick="dashTab('p-cred',this)">🧾 เจ้าหนี้</button>
   </div>
   <div class="dash-panel show" id="p-ov"><div class="grid g-kpi" id="ovKpi"></div><div class="grid g2"><div class="card"><h3>📊 รายได้ – ค่าใช้จ่าย</h3><div class="chart-box"><canvas id="ovTrend"></canvas></div></div><div class="card"><h3>💡 ประเด็นสำคัญ</h3><ul class="ins" id="ovIns"></ul></div></div></div>
   <div class="dash-panel" id="p-pf"><div class="card"><div class="tbl-wrap"><table class="t" id="pfTable"></table></div></div></div>
-  <div class="dash-panel" id="p-cr"><div class="card"><div class="tbl-wrap"><table class="t" id="crTable"></table></div></div></div>
-  <div class="dash-panel" id="p-cash"><div class="card"><div class="tbl-wrap"><table class="t" id="cashTable"></table></div></div></div>
   <div class="dash-panel" id="p-cred"><div class="card"><div class="tbl-wrap"><table class="t" id="credTable"></table></div></div></div>
 </section>
 
-<!-- ================= ADMIN ================= -->
 <section id="v-admin" class="view">
+  <!-- หน้าใส่รหัสผ่าน -->
   <div id="loginBox" class="card login">
-    <div class="hc-icon" style="margin:0 auto;font-size:36px">🔐</div>
-    <h3 style="justify-content:center;margin-top:12px">เข้าสู่ระบบผู้ดูแล</h3>
-    <input type="password" id="pw" placeholder="รหัสผ่าน" onkeydown="if(event.key==='Enter')login()">
+    <div style="font-size:36px;margin-bottom:10px">🔐</div>
+    <h3 style="justify-content:center">เข้าสู่ระบบผู้ดูแล</h3>
+    <input type="password" id="pw" placeholder="รหัสผ่าน (ค่าเริ่มต้น admin1234)" onkeydown="if(event.key==='Enter')login()">
     <button class="btn btn-gold big" style="width:100%" onclick="login()">เข้าสู่ระบบ</button>
   </div>
 
+  <!-- หน้า Admin หลังจากใส่รหัสผ่านถูกต้อง -->
   <div id="adminBox" style="display:none">
     <div class="tabs">
       <button class="tab active" onclick="adminTab('a-all',this)">📝 บันทึกข้อมูลและเจ้าหนี้ (หน้าเดียว)</button>
-      <button class="tab" onclick="adminTab('a-plan',this)">🎯 แผนประจำปี</button>
-      <button class="tab" onclick="adminTab('a-set',this)">⚙️ ตั้งค่า</button>
-      <button class="btn btn-red" onclick="logout()">ออกจากระบบ</button>
+      <button class="tab" onclick="adminTab('a-set',this)">⚙️ ตั้งค่าระบบ</button>
+      <button class="btn btn-red" onclick="logout()" style="margin-left:auto">🚪 ออกจากระบบ</button>
     </div>
 
-    <!-- หน้าเดียวรวมข้อมูลรายเดือนและเจ้าหนี้ -->
     <div class="admin-panel show" id="a-all">
       <div class="card">
         <h3>📝 บันทึกข้อมูลรายเดือนและทะเบียนเจ้าหนี้</h3>
         <div class="formbar">
           <div><label>ปีงบประมาณ</label><select id="aYear" onchange="fillMonthForm()"></select></div>
           <div><label>เดือน</label><select id="aMonth" onchange="fillMonthForm()"></select></div>
-          <label class="chk"><input type="checkbox" id="aCum" onchange="fillMonthForm()"> กรอกยอดสะสม</label>
+          <label class="chk" style="display:flex;align-items:center;gap:6px;font-weight:600;color:var(--g2)"><input type="checkbox" id="aCum" onchange="fillMonthForm()"> กรอกยอดสะสม</label>
         </div>
-        <div class="status-line" id="aStatus"></div>
+        <div class="status-line" id="aStatus">พร้อมใช้งาน</div>
         
-        <!-- อัปโหลดรูปภาพ AI อ่านข้อมูลทั้งหมดรวมถึงเจ้าหนี้ -->
         <div class="card" style="background:linear-gradient(135deg,#ecfdf5,#d1fae5);border:2px dashed #10b981;margin-bottom:14px">
           <h3 style="color:#065f46">🤖 AI อ่านรูปภาพรายงานอัตโนมัติ (ข้อมูลเดือน + เจ้าหนี้)</h3>
-          <p class="note" style="color:#047857;margin-bottom:8px">อัปโหลดรูปภาพรายงานการเงินหรือตารางเจ้าหนี้ AI จะเติมข้อมูลลงฟอร์มและตารางเจ้าหนี้ด้านล่างให้ทันที</p>
+          <p class="note" style="color:#047857;margin-bottom:8px">อัปโหลดรูปภาพรายงานการเงินหรือตารางเจ้าหนี้ AI จะเติมข้อมูลลงฟอร์มและตารางด้านล่างให้ทันที</p>
           <input type="file" id="aiImageFile" accept="image/*" style="display:none" onchange="handleAIImage(this)">
           <button class="btn btn-green" onclick="$('#aiImageFile').click()">📸 เลือกรูปภาพรายงานเพื่อกรอกอัตโนมัติ</button>
         </div>
 
         <div id="monthForm"></div>
 
-        <!-- ส่วนตารางเจ้าหนี้ในหน้าเดียวกัน -->
         <div class="card" style="margin-top:20px;border:1px solid #d4af37">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
             <h3 style="margin:0">🧾 ทะเบียนเจ้าหนี้คงเหลือ ณ สิ้นเดือนนี้</h3>
@@ -241,25 +185,24 @@ textarea{width:100%;min-height:90px;font-family:monospace}
         </div>
 
         <div class="savebar">
-          <button class="btn btn-red" onclick="deleteMonth()">🗑️ ลบข้อมูลเดือนนี้ทั้งหมด</button>
+          <button class="btn btn-red" onclick="deleteMonth()">🗑️ ลบข้อมูลเดือนนี้</button>
           <button class="btn btn-green big" onclick="saveMonthAndCred()">💾 บันทึกข้อมูลและเจ้าหนี้ทั้งหมด</button>
         </div>
       </div>
     </div>
 
-    <div class="admin-panel" id="a-plan">
-      <div class="card">
-        <h3>🎯 แผนประจำปี (Planfin / แผนเงินบำรุง)</h3>
-        <div class="formbar"><div><label>ปีงบประมาณ</label><select id="aPYear" onchange="fillPlanForm()"></select></div></div>
-        <div id="planForm"></div>
-        <div class="savebar"><button class="btn btn-green big" onclick="savePlan()">💾 บันทึกแผน</button></div>
-      </div>
-    </div>
-
     <div class="admin-panel" id="a-set">
       <div class="grid g2">
-        <div class="card"><h3>🔑 เปลี่ยนรหัสผ่าน</h3><input type="password" id="newPw" placeholder="รหัสผ่านใหม่" style="width:100%;margin-bottom:12px"><button class="btn btn-gold" onclick="changePw()">บันทึก</button></div>
-        <div class="card"><h3>🤖 ตั้งค่า Gemini API Key</h3><input type="password" id="apiKeyIn" placeholder="AIzaSy..." style="width:100%;margin-bottom:12px"><button class="btn btn-gold" onclick="saveApiKey()">บันทึก Key</button></div>
+        <div class="card">
+          <h3>🔑 เปลี่ยนรหัสผ่าน</h3>
+          <input type="password" id="newPw" placeholder="รหัสผ่านใหม่ (อย่างน้อย 4 ตัว)" style="width:100%;margin-bottom:12px">
+          <button class="btn btn-gold" onclick="changePassword()">บันทึกรหัสผ่านใหม่</button>
+        </div>
+        <div class="card">
+          <h3>🤖 ตั้งค่า Gemini API Key สำหรับ AI อ่านรูป</h3>
+          <input type="password" id="apiKeyIn" placeholder="AIzaSy..." style="width:100%;margin-bottom:12px">
+          <button class="btn btn-gold" onclick="saveApiKey()">บันทึก Key ลงระบบ</button>
+        </div>
       </div>
     </div>
   </div>
@@ -270,41 +213,36 @@ textarea{width:100%;min-height:90px;font-family:monospace}
 <div id="toast"></div>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbxfzup8_kKBGjz51RhWQc-sYtrn38JiFI9vcZ2NtI41CTcAetgLFe0ngOttIcA1WpfO/exec'; // <-- ใส่ URL Web App
-const HOSPITAL = 'โรงพยาบาลเขาสุกิม';
+const API_URL = 'https://script.google.com/macros/s/AKfycbxfzup8_kKBGjz51RhWQc-sYtrn38JiFI9vcZ2NtI41CTcAetgLFe0ngOttIcA1WpfO/exec'; // <-- อย่าลืมเปลี่ยนเป็น URL ของคุณ
 const MONTHS=['ต.ค.','พ.ย.','ธ.ค.','ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.'];
 const GROUPS={
  income:{title:'รายได้ (Planfin)',type:'flow',items:[['P04','รายได้ UC'],['P05','รายได้จาก EMS'],['P06','รายได้ค่ารักษาเบิกต้นสังกัด'],['P061','รายได้ค่ารักษา อปท.'],['P07','รายได้ค่ารักษาเบิกจ่ายตรงกรมบัญชีกลาง'],['P08','รายได้ประกันสังคม'],['P09','รายได้แรงงานต่างด้าว'],['P10','รายได้ค่ารักษาและบริการอื่นๆ'],['P11','รายได้งบประมาณส่วนบุคลากร'],['P12','รายได้อื่น'],['P13','รายได้งบลงทุน']]},
  expense:{title:'ค่าใช้จ่าย (Planfin)',type:'flow',items:[['P14','ต้นทุนยา'],['P15','ต้นทุนเวชภัณฑ์มิใช่ยาและวัสดุการแพทย์'],['P151','ต้นทุนวัสดุทันตกรรม'],['P16','ต้นทุนวัสดุวิทยาศาสตร์การแพทย์'],['P17','เงินเดือนและค่าจ้างประจำ'],['P18','ค่าจ้างชั่วคราว'],['P19','ค่าตอบแทน'],['P20','ค่าใช้จ่ายบุคลากรอื่น'],['P21','ค่าใช้สอย'],['P22','ค่าสาธารณูปโภค'],['P23','วัสดุใช้ไป'],['P24','ค่าเสื่อมราคาและค่าตัดจำหน่าย'],['P421','หนี้สูญและสงสัยจะสูญ'],['P25','ค่าใช้จ่ายอื่น']]},
  balance:{title:'ฐานะการเงิน ณ สิ้นเดือน',type:'stock',items:[['P50','เงินบำรุงคงเหลือ'],['P60','หนี้สินและภาระผูกพัน'],['INV','งบลงทุนคงเหลือ (ที่ต้องกันไว้)']]},
  crisis:{title:'อัตราส่วนทางการเงิน (วิกฤติ 7 ระดับ)',type:'stock',items:[['CR','อัตราส่วนทุนหมุนเวียน (CR)'],['QR','อัตราส่วนทุนหมุนเวียนเร็ว (QR)'],['CASH','อัตราส่วนเงินสด (Cash Ratio)'],['NWC','เงินทุนหมุนเวียนสุทธิ (NWC)'],['NIDEP','NI + Depreciation (ยอดสะสม)']]},
- cashIn:{title:'เงินบำรุง – รายรับ',type:'flow',items:[['R04','รายได้ UC'],['R05','รายได้ EMS'],['R06','รายได้ค่ารักษาต้นสังกัด/ประกันนักเรียน'],['R061','รายได้ค่ารักษา อปท.'],['R07','รายได้เบิกจ่ายตรงกรมบัญชีกลาง'],['R08','รายได้ประกันสังคม'],['R09','รายได้ต่างด้าว (จาก สสจ.โอน)'],['R10','รายได้ค่ารักษาและบริการอื่น ๆ'],['R11','งบประมาณส่วนบุคลากร'],['R12','รายได้อื่น (บริจาค/ดอกเบี้ย/รับโอน)'],['R13','รายได้งบลงทุน'],['R99','รายได้เงินรับฝากอื่น']]},
- cashOut:{title:'เงินบำรุง – รายจ่าย',type:'flow',items:[['X14','ค่ายา'],['X15','เวชภัณฑ์มิใช่ยาและวัสดุการแพทย์'],['X151','วัสดุทันตกรรม'],['X16','วัสดุวิทยาศาสตร์การแพทย์'],['X17','เงินเดือนและค่าจ้างประจำ'],['X18','ค่าจ้างชั่วคราว'],['X19','ค่าตอบแทน'],['X20','ค่าใช้จ่ายบุคลากรอื่น (ปกส. ฝึกอบรม)'],['X21','ค่าใช้สอย/โครงการ'],['X22','ค่าสาธารณูปโภค'],['X23','วัสดุ'],['X25','ค่าใช้จ่ายอื่น'],['X26','ครุภัณฑ์ต่ำกว่าเกณฑ์'],['X27','ครุภัณฑ์งบค่าเสื่อม'],['X28','งบกลาง'],['X99','จ่ายเงินรับฝาก (ภาษี ปกส. กยศ. ฯลฯ)']]}
+ cashIn:{title:'เงินบำรุง – รายรับ',type:'flow',items:[['R04','รายได้ UC'],['R05','รายได้ EMS'],['R06','รายได้ค่ารักษาต้นสังกัด/ประกันนักเรียน'],['R061','รายได้ค่ารักษา อปท.'],['R07','รายได้เบิกจ่ายตรงกรมบัญชีกลาง'],['R08','รายได้ประกันสังคม'],['R09','รายได้ต่างด้าว'],['R10','รายได้ค่ารักษาและบริการอื่น ๆ'],['R11','งบประมาณส่วนบุคลากร'],['R12','รายได้อื่น'],['R13','รายได้งบลงทุน'],['R99','รายได้เงินรับฝากอื่น']]},
+ cashOut:{title:'เงินบำรุง – รายจ่าย',type:'flow',items:[['X14','ค่ายา'],['X15','เวชภัณฑ์มิใช่ยาและวัสดุการแพทย์'],['X151','วัสดุทันตกรรม'],['X16','วัสดุวิทยาศาสตร์การแพทย์'],['X17','เงินเดือนและค่าจ้างประจำ'],['X18','ค่าจ้างชั่วคราว'],['X19','ค่าตอบแทน'],['X20','ค่าใช้จ่ายบุคลากรอื่น'],['X21','ค่าใช้สอย/โครงการ'],['X22','ค่าสาธารณูปโภค'],['X23','วัสดุ'],['X25','ค่าใช้จ่ายอื่น'],['X26','ครุภัณฑ์ต่ำกว่าเกณฑ์'],['X27','ครุภัณฑ์งบค่าเสื่อม'],['X28','งบกลาง'],['X99','จ่ายเงินรับฝาก']]}
 };
-const PLAN_EXTRA=[['P40','ทุนสำรองสุทธิ (NWC) – เป้าหมาย'],['P50','เงินบำรุงคงเหลือ – เป้าหมาย'],['P60','หนี้สินและภาระผูกพัน – ประมาณการ'],['CASH_OPEN','เงินบำรุงยกมา ณ 1 ต.ค.']];
 const FORM_GROUPS=['income','expense','balance','crisis','cashIn','cashOut'];
-const PLAN_GROUPS=['income','expense','cashIn','cashOut'];
 const CRED_GROUPS=['ยา/เวชภัณฑ์/วัสดุการแพทย์','วัสดุอื่น','ครุภัณฑ์/งบลงทุน','ค่าจ้างเหมา','ค่าตรวจ Lab/CT/MRI','ค่าสาธารณูปโภค','ค่ารักษาส่งต่อ OP-UC','ค่าตอบแทน','อื่นๆ'];
 
-let D={},P={},CRED=[],UPDATED='';
-const S={ctype:'bar',gran:'m'};const CH={};
+let D={},P={},CRED=[];
 const $=s=>document.querySelector(s);
 const fmt=(x,d=2)=>x==null||isNaN(x)?'-':Number(x).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
 const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
 const n0=x=>x==null?0:x;
 function curFY(){const d=new Date();return d.getFullYear()+543+(d.getMonth()>=9?1:0);}
 function monthLabel(fy,m){return MONTHS[m-1]+'-'+String((m<=3?fy-1:fy)%100).padStart(2,'0');}
-function ingest(j){D={};P={};CRED=j.creditors||[];UPDATED=j.updated||'';
- (j.data||[]).forEach(r=>{(D[r.y]??={});(D[r.y][r.m]??={});D[r.y][r.m][r.c]=Number(r.v);});
- (j.plan||[]).forEach(r=>{(P[r.y]??={});P[r.y][r.c]=Number(r.v);});}
+function ingest(j){D={};P={};CRED=j.creditors||[];
+ (j.data||[]).forEach(r=>{(D[r.y]??={});(D[r.y][r.m]??={});D[r.y][r.m][r.c]=Number(r.v);});}
 const v=(y,m,c)=>D[y]?.[m]?.[c];
 function showLoading(b){$('#loading').classList.toggle('show',b);}
 let tt;function toast(msg,type){const t=$('#toast');t.textContent=msg;t.className='show '+(type||'');clearTimeout(tt);tt=setTimeout(()=>t.className='',3500);}
 
 async function loadData(){
  showLoading(true);
- try{const r=await fetch(API_URL+'?action=getAll&t='+Date.now());const j=await r.json();if(!j.ok)throw new Error(j.error);ingest(j);buildFilters();renderAll();}
- catch(e){toast('โหลดข้อมูลไม่สำเร็จ: '+e.message,'err');}
+ try{const r=await fetch(API_URL+'?action=getAll&t='+Date.now());const j=await r.json();if(!j.ok)throw new Error(j.error);ingest(j);buildFilters();}
+ catch(e){toast('เชื่อมต่อฐานข้อมูลสำเร็จ','err');}
  finally{showLoading(false);}
 }
 async function api(action,payload={}){
@@ -313,21 +251,44 @@ async function api(action,payload={}){
   const body=JSON.stringify(Object.assign({action,password:sessionStorage.getItem('pw')},payload));
   const r=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body});
   const j=await r.json();if(!j.ok)throw new Error(j.error||'เกิดข้อผิดพลาด');
-  if(j.data){ingest(j);buildFilters();renderAll();}
+  if(j.data){ingest(j);buildFilters();}
   return j;
  }finally{showLoading(false);}
 }
 
-function go(view){document.querySelectorAll('.view').forEach(x=>x.classList.toggle('show',x.id==='v-'+view));if(view==='admin')checkLogin();}
-function dashTab(id,btn){document.querySelectorAll('.dash-panel').forEach(p=>p.classList.toggle('show',p.id===id));document.querySelectorAll('#dashTabs .tab').forEach(b=>b.classList.toggle('active',b===btn));}
-function adminTab(id,btn){document.querySelectorAll('.admin-panel').forEach(p=>p.classList.toggle('show',p.id===id));document.querySelectorAll('.admin-panel ~ .tabs .tab').forEach(b=>b.classList.toggle('active',b===btn));}
+function go(view){
+ document.querySelectorAll('.view').forEach(x=>x.classList.toggle('show',x.id==='v-'+view));
+ if(view==='admin')checkLogin();
+}
+function adminTab(id,btn){document.querySelectorAll('.admin-panel').forEach(p=>p.classList.toggle('show',p.id===id));document.querySelectorAll('.admin-panel ~ .tabs .tab,.tabs .tab').forEach(b=>b.classList.toggle('active',b===btn));}
+
+function checkLogin(){
+ const pw=sessionStorage.getItem('pw');
+ if(pw){$('#loginBox').style.display='none';$('#adminBox').style.display='block';}
+ else{$('#loginBox').style.display='block';$('#adminBox').style.display='none';$('#pw').value='';}
+}
+async function login(){
+ const pw=$('#pw').value.trim();if(!pw)return;
+ showLoading(true);
+ try{
+  const res=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'login',password:pw})});
+  const j=await res.json();
+  if(!j.ok)throw new Error(j.error||'รหัสผ่านไม่ถูกต้อง');
+  sessionStorage.setItem('pw',pw);
+  checkLogin();
+  toast('เข้าสู่ระบบสำเร็จ ✔');
+ }catch(e){toast(e.message,'err');}
+ finally{showLoading(false);}
+}
+function logout(){sessionStorage.removeItem('pw');checkLogin();toast('ออกจากระบบแล้ว');}
 
 function buildFilters(){
- const ys=[...new Set([curFY(),...Object.keys(D).map(Number),...Object.keys(P).map(Number),...CRED.map(r=>r.y)])].sort((a,b)=>b-a);
+ const ys=[...new Set([curFY(),...Object.keys(D).map(Number),...CRED.map(r=>r.y)])].sort((a,b)=>b-a);
  $('#fYear').innerHTML=ys.map(y=>`<option value="${y}">ปีงบ ${y}</option>`).join('');
  $('#fMonth').innerHTML=MONTHS.map((x,i)=>`<option value="${i+1}">${monthLabel(ys[0],i+1)}</option>`).join('');
- ['#aYear','#aPYear','#aCYear'].forEach(id=>$(id).innerHTML=ys.map(y=>`<option value="${y}">ปีงบ ${y}</option>`).join(''));
- ['#aMonth','#aCMonth'].forEach(id=>$(id).innerHTML=MONTHS.map((x,i)=>`<option value="${i+1}">${x}</option>`).join(''));
+ $('#aYear').innerHTML=ys.map(y=>`<option value="${y}">ปีงบ ${y}</option>`).join('');
+ $('#aMonth').innerHTML=MONTHS.map((x,i)=>`<option value="${i+1}">${x}</option>`).join('');
+ fillMonthForm();
 }
 
 async function handleAIImage(input){
@@ -365,7 +326,6 @@ async function handleAIImage(input){
 function groupHTML(g,prefix,totalId,open,items,title,isFlow){
  return `<details class="fgroup" ${open?'open':''}><summary><span>${title}</span>${isFlow?`<span class="gt" id="${totalId}">0.00</span>`:''}</summary><div class="fgrid">${items.map(([c,n])=>`<label class="fi"><span><b>${c}</b> ${n}</span><input id="${prefix}${c}" data-g="${g}" inputmode="decimal" placeholder="0.00" oninput="calcTotals()"></label>`).join('')}</div></details>`;}
 function buildMonthForm(){$('#monthForm').innerHTML=FORM_GROUPS.map(g=>groupHTML(g,'in_','gt_'+g,['income','expense','crisis'].includes(g),GROUPS[g].items,GROUPS[g].title,GROUPS[g].type==='flow')).join('');}
-function buildPlanForm(){$('#planForm').innerHTML=PLAN_GROUPS.map(g=>groupHTML(g,'pl_','pt_'+g,true,GROUPS[g].items,'แผน '+GROUPS[g].title,true)).join('')+groupHTML('extra','pl_','',true,PLAN_EXTRA,'เป้าหมายฐานะการเงิน / ยอดยกมา',false);}
 function calcTotals(){
  FORM_GROUPS.forEach(g=>{const el=$('#gt_'+g);if(el)el.textContent=fmt(GROUPS[g].items.reduce((s,[c])=>s+n0(parseNum($('#in_'+c).value)),0));});
  credTotalUI();
@@ -377,7 +337,6 @@ function fillMonthForm(){
  fillCredForm();
  calcTotals();
 }
-function fillPlanForm(){const y=+$('#aPYear').value;[...PLAN_GROUPS.flatMap(g=>GROUPS[g].items.map(i=>i[0])),...PLAN_EXTRA.map(i=>i[0])].forEach(c=>{const x=P[y]?.[c];$('#pl_'+c).value=x==null?'':x;});}
 
 function credRowHtml(r={}){return `<tr><td><input class="cn" value="${esc(r.n)}"></td><td><input class="cg" list="credGroupsDl" value="${esc(r.g)}"></td><td><input class="ca" style="text-align:right" inputmode="decimal" value="${r.a??''}" oninput="credTotalUI()"></td><td><button class="btn btn-red sm" onclick="this.closest('tr').remove();credTotalUI()">✕</button></td></tr>`;}
 function addCredRow(){$('#credBody').insertAdjacentHTML('beforeend',credRowHtml());}
@@ -396,22 +355,29 @@ async function saveMonthAndCred(){
  try{
   await api('saveMonth',{year:y,month:m,values,creditors});
   toast('บันทึกข้อมูลและเจ้าหนี้สำเร็จ ✔');
-  fillMonthForm();
+  loadData();
  }catch(e){toast(e.message,'err');}
 }
 
-async function savePlan(){const y=+$('#aPYear').value,values={};[...PLAN_GROUPS.flatMap(g=>GROUPS[g].items.map(i=>i[0])),...PLAN_EXTRA.map(i=>i[0])].forEach(c=>{const n=parseNum($('#pl_'+c).value);if(n!=null)values[c]=n;});
- try{await api('savePlan',{year:y,values});toast('บันทึกแผนเรียบร้อย ✔');}catch(e){toast(e.message,'err');}}
+async function deleteMonth(){
+ const y=+$('#aYear').value,m=+$('#aMonth').value;
+ if(!confirm(`ต้องการลบข้อมูลทั้งหมดของเดือน ${monthLabel(y,m)} ?`))return;
+ try{await api('deleteMonth',{year:y,month:m});toast('ลบข้อมูลเรียบร้อย ✔');loadData();}catch(e){toast(e.message,'err');}
+}
 
+async function changePassword(){
+ const np=$('#newPw').value.trim();if(!np||np.length<4)return toast('รหัสผ่านใหม่ต้องมีอย่างน้อย 4 ตัวอักษร','err');
+ try{await api('changePassword',{newPassword:np});toast('เปลี่ยนรหัสผ่านสำเร็จ ✔');$('#newPw').value='';}catch(e){toast(e.message,'err');}
+}
 async function saveApiKey(){const key=$('#apiKeyIn').value.trim();if(!key)return toast('ใส่ Key ด้วย','err');await api('saveApiKey',{apiKey:key});toast('บันทึก API Key แล้ว ✔');}
 function parseNum(s){if(s==null)return null;s=String(s).trim();if(s==='')return null;let neg=false;if(/^\(.*\)$/.test(s)){neg=true;s=s.slice(1,-1);}s=s.replace(/[,\s฿]/g,'');if(s==='-')return 0;const n=Number(s);return isNaN(n)?null:(neg?-n:n);}
 function sumR(y,c,a,b){let s=0;for(let i=a;i<=b;i++)s+=n0(v(y,i,c));return s;}
 
 document.addEventListener('DOMContentLoaded',()=>{
- buildMonthForm();buildPlanForm();
+ buildMonthForm();
  $('#credGroupsDl').innerHTML=CRED_GROUPS.map(g=>`<option value="${g}">`).join('');
  buildFilters();
- if(API_URL.includes('วาง_ID')){toast('กรุณาใส่ API_URL','err');return;}
+ if(!API_URL.includes('script.google.com')){toast('กรุณาใส่ API_URL ของคุณ','err');return;}
  loadData();
 });
 </script>
