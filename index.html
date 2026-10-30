@@ -29,11 +29,8 @@ main{padding:22px;max-width:1500px;margin:0 auto}
 .btn:hover{filter:brightness(1.08) saturate(1.05)}
 .btn:active{transform:translateY(4px)}
 .btn-gold{color:#3d2c00;background:linear-gradient(180deg,#fff6cc 0%,#f5d76e 38%,#d4af37 72%,#b8901f 100%);box-shadow:0 5px 0 #8a6a00,0 9px 18px rgba(0,0,0,.28),inset 0 2px 1px rgba(255,255,255,.85),inset 0 -3px 6px rgba(120,90,0,.35)}
-.btn-gold:active{box-shadow:0 1px 0 #8a6a00,0 3px 8px rgba(0,0,0,.25),inset 0 3px 6px rgba(120,90,0,.4)}
 .btn-green{color:#fff;text-shadow:0 1px 1px rgba(0,0,0,.35);background:linear-gradient(180deg,#6ee7a8 0%,#22a35a 40%,#15803d 70%,#0f5c2e 100%);box-shadow:0 5px 0 #0a3d1f,0 9px 18px rgba(0,0,0,.28),inset 0 2px 1px rgba(255,255,255,.55),inset 0 -3px 6px rgba(0,0,0,.25)}
-.btn-green:active{box-shadow:0 1px 0 #0a3d1f,0 3px 8px rgba(0,0,0,.25),inset 0 3px 6px rgba(0,0,0,.3)}
 .btn-red{color:#fff;background:linear-gradient(180deg,#fca5a5,#dc2626 55%,#991b1b);box-shadow:0 5px 0 #6b1010,0 8px 16px rgba(0,0,0,.25),inset 0 2px 1px rgba(255,255,255,.45)}
-.btn-red:active{box-shadow:0 1px 0 #6b1010}
 .btn-ghost{color:#fff;background:linear-gradient(180deg,rgba(255,255,255,.28),rgba(255,255,255,.06));box-shadow:0 4px 0 rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.2)}
 .btn.big{padding:14px 26px;font-size:17px;border-radius:18px}
 .btn.sm{padding:6px 10px;font-size:13px;border-radius:10px}
@@ -136,7 +133,6 @@ table.t{width:100%;border-collapse:collapse;font-size:14px}
 </section>
 
 <section id="v-admin" class="view">
-  <!-- หน้าใส่รหัสผ่าน -->
   <div id="loginBox" class="card login">
     <div style="font-size:36px;margin-bottom:10px">🔐</div>
     <h3 style="justify-content:center">เข้าสู่ระบบผู้ดูแล</h3>
@@ -144,7 +140,6 @@ table.t{width:100%;border-collapse:collapse;font-size:14px}
     <button class="btn btn-gold big" style="width:100%" onclick="login()">เข้าสู่ระบบ</button>
   </div>
 
-  <!-- หน้า Admin หลังจากใส่รหัสผ่านถูกต้อง -->
   <div id="adminBox" style="display:none">
     <div class="tabs">
       <button class="tab active" onclick="adminTab('a-all',this)">📝 บันทึกข้อมูลและเจ้าหนี้ (หน้าเดียว)</button>
@@ -300,15 +295,20 @@ async function handleAIImage(input){
   reader.onload=async()=>{
    const base64=reader.result.split(',')[1];
    const res=await api('parseImage',{image:base64,mimeType:file.type});
-   const vals=res.values?.values||res.values||{};
+   
+   // ดึงผลลัพธ์จากโครงสร้างที่ส่งกลับมา
+   const dataObj = res.result || res.values || {};
+   const vals = dataObj.values || dataObj;
+   
    let filled=0;
    Object.entries(vals).forEach(([c,val])=>{
     const el=$('#in_'+c);if(el){el.value=val;filled++;}
    });
-   const creds=res.values?.creditors;
+   
+   const creds=dataObj.creditors;
    if(creds&&Array.isArray(creds)){
     fillCredForm(creds);
-    toast(`AI อ่านข้อมูลเดือนสำเร็จ ${filled} รายการ และเจ้าหนี้ ${creds.length} รายการ ✔`);
+    toast(`AI อ่านสำเร็จ: ข้อมูล ${filled} รายการ, เจ้าหนี้ ${creds.length} รายการ ✔`);
    }else{
     toast(`AI อ่านข้อมูลสำเร็จ ${filled} รายการ ✔`);
    }
