@@ -25,7 +25,6 @@ h1,h2,h3,h4,.btn,.tab,th,.kpi .value{font-family:'Prompt',sans-serif}
 main{padding:22px;max-width:1500px;margin:0 auto}
 .view{display:none;animation:fade .35s ease}.view.show{display:block}
 @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-/* ปุ่มนูน */
 .btn{border:none;cursor:pointer;border-radius:14px;padding:10px 18px;font-size:15px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap;transition:transform .08s,box-shadow .08s,filter .2s;user-select:none}
 .btn:hover{filter:brightness(1.08) saturate(1.05)}
 .btn:active{transform:translateY(4px)}
@@ -43,12 +42,10 @@ main{padding:22px;max-width:1500px;margin:0 auto}
 .segb{border:none;cursor:pointer;font-family:Prompt;font-size:14px;padding:9px 14px;border-radius:12px;color:#ecfdf5;background:linear-gradient(180deg,#1f7a4d,#14532d);box-shadow:0 4px 0 #052e22,0 6px 12px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.3);transition:.08s}
 .segb:active{transform:translateY(3px);box-shadow:0 1px 0 #052e22}
 .segb.on{color:#3d2c00;background:linear-gradient(180deg,#fff6cc,#f5d76e 45%,#d4af37);box-shadow:0 4px 0 #8a6a00,0 6px 12px rgba(0,0,0,.2),inset 0 2px 1px rgba(255,255,255,.8)}
-/* แท็บ */
 .tabs{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0}
 .tab{border:none;cursor:pointer;font-size:15px;font-weight:500;padding:11px 18px;border-radius:14px;color:#ecfdf5;background:linear-gradient(180deg,#1f7a4d,#14532d);box-shadow:0 5px 0 #052e22,0 8px 14px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.3);transition:.08s}
 .tab:active{transform:translateY(4px);box-shadow:0 1px 0 #052e22}
 .tab.active{color:#3d2c00;background:linear-gradient(180deg,#fff6cc,#f5d76e 40%,#d4af37);box-shadow:0 5px 0 #8a6a00,0 8px 14px rgba(0,0,0,.25),inset 0 2px 1px rgba(255,255,255,.85)}
-/* การ์ด */
 .card{background:linear-gradient(180deg,rgba(255,255,255,.97),rgba(255,253,244,.95));border-radius:20px;padding:20px;box-shadow:0 12px 34px rgba(0,0,0,.22);border:1px solid rgba(212,175,55,.4);margin-bottom:18px}
 .card h3{font-size:18px;color:var(--g2);margin-bottom:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .card h3::after{content:'';flex:1;height:3px;border-radius:3px;background:linear-gradient(90deg,var(--au3),transparent);min-width:40px;order:5}
@@ -62,7 +59,6 @@ main{padding:22px;max-width:1500px;margin:0 auto}
 .grid .card{margin-bottom:0}
 .chart-box{position:relative;height:320px}
 .chart-box.tall{height:620px}
-/* KPI */
 .kpi{position:relative;overflow:hidden;border-radius:20px;padding:18px;color:#fff;box-shadow:0 10px 24px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.35);min-height:150px}
 .kpi::before{content:'';position:absolute;right:-40px;top:-40px;width:140px;height:140px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.28),transparent 70%)}
 .kpi .ic{font-size:26px;position:absolute;right:16px;top:14px}
@@ -77,13 +73,11 @@ main{padding:22px;max-width:1500px;margin:0 auto}
 .kpi.brown{background:linear-gradient(135deg,#713f12,#b45309)}
 .chip{display:inline-block;padding:1px 8px;border-radius:999px;font-weight:700;font-size:12px;margin-right:4px}
 .chip.up{background:#d1fae5;color:#065f46}.chip.down{background:#fee2e2;color:#991b1b}.chip.nt{background:#e2e8f0;color:#334155}
-/* แถบตัวกรอง */
 .filterbar{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;background:linear-gradient(135deg,rgba(255,255,255,.16),rgba(255,255,255,.06));border:1px solid rgba(245,215,110,.45);backdrop-filter:blur(10px);border-radius:20px;padding:14px 18px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
 .f label{display:block;font-size:13px;color:#fde68a;margin-bottom:4px;font-weight:600}
 .filterbar .actions{margin-left:auto;display:flex;gap:10px;flex-wrap:wrap}
 select,input,textarea{font-family:Sarabun;font-size:15px;padding:9px 12px;border-radius:12px;border:1px solid #d6c27a;background:linear-gradient(180deg,#fff,#fffbea);box-shadow:inset 0 2px 4px rgba(0,0,0,.08);outline:none;color:var(--ink)}
 select:focus,input:focus,textarea:focus{border-color:var(--au3);box-shadow:0 0 0 3px rgba(212,175,55,.3)}
-/* แถบ Risk Score ตัวใหญ่ */
 .riskbanner{margin-top:18px;border-radius:26px;padding:20px 26px;display:flex;flex-wrap:wrap;align-items:center;gap:26px;color:#fff;background:linear-gradient(120deg,var(--rc),var(--rc2));box-shadow:0 14px 34px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.35);border:2px solid rgba(255,255,255,.4);position:relative;overflow:hidden}
 .riskbanner::after{content:'';position:absolute;right:-80px;top:-80px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.25),transparent 70%)}
 .rb-num{width:180px;height:180px;flex:none;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle at 30% 25%,rgba(255,255,255,.5),rgba(255,255,255,.08) 62%);box-shadow:inset 0 -10px 20px rgba(0,0,0,.25),0 10px 24px rgba(0,0,0,.3);border:4px solid rgba(255,255,255,.75);font-family:Prompt}
@@ -98,7 +92,6 @@ select:focus,input:focus,textarea:focus{border-color:var(--au3);box-shadow:0 0 0
 .rb-strip div{text-align:center;border-radius:10px;padding:4px 2px;font-size:12px;background:rgba(0,0,0,.2)}
 .rb-strip div b{display:block;font-size:20px;font-family:Prompt;border-radius:8px;margin-top:2px;box-shadow:inset 0 -3px 0 rgba(0,0,0,.2)}
 .rb-strip div.cur{outline:3px solid #fff}
-/* ตาราง */
 .tbl-wrap{overflow:auto;border-radius:14px;max-height:75vh}
 table.t{width:100%;border-collapse:collapse;font-size:14px}
 .t th{background:linear-gradient(180deg,#14532d,#0b3d2e);color:#fff3c4;padding:10px;position:sticky;top:0;font-weight:500;z-index:1}
@@ -112,7 +105,6 @@ table.t{width:100%;border-collapse:collapse;font-size:14px}
 .cbad{color:#b91c1c!important;font-weight:700;background:#fee2e2!important}
 .badge{padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700}
 .badge.ok{background:#d1fae5;color:#065f46}.badge.no{background:#fee2e2;color:#991b1b}
-/* บทวิเคราะห์ */
 .ins{list-style:none;display:grid;gap:10px}
 .ins li{padding:10px 14px;border-radius:12px;border-left:5px solid #64748b;background:#f8fafc;line-height:1.6}
 .ins li.good{border-color:#10b981;background:#ecfdf5}.ins li.bad{border-color:#dc2626;background:#fef2f2}.ins li.warn{border-color:#f59e0b;background:#fffbeb}
@@ -120,14 +112,12 @@ table.t{width:100%;border-collapse:collapse;font-size:14px}
 .narr h4:first-child{margin-top:0}
 .narr p{text-indent:2.5em;line-height:2;font-size:16px;margin-bottom:10px;text-align:justify}
 .chk{display:flex;align-items:center;gap:6px;font-size:14px;color:var(--g2);font-weight:600}
-/* การ์ดเทียบรายการ */
 .mini h4{font-size:15px;color:#14532d}
 .mini .mv{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;color:#475569;margin:8px 0;gap:6px}
 .mini .mv b{font-size:16px;font-family:Prompt;color:#1e293b}
 .mini .chart-box{height:170px}
 .mini p{font-size:13.5px;line-height:1.7;color:#334155;margin-top:8px;padding:8px 10px;border-radius:10px;background:#f8fafc}
 .mini.good{border-top:5px solid #10b981}.mini.bad{border-top:5px solid #dc2626}.mini.nt{border-top:5px solid #d4af37}
-/* หน้าหลัก */
 .hero{text-align:center;color:#fff;padding:30px 10px}
 .hero-badge{display:inline-block;padding:6px 16px;border-radius:999px;background:rgba(245,215,110,.18);border:1px solid rgba(245,215,110,.6);color:#fde68a;font-size:13px;letter-spacing:1px}
 .hero h1{font-size:clamp(26px,4vw,44px);margin:14px 0 8px;background:linear-gradient(90deg,#fff,#fde68a,#fff);-webkit-background-clip:text;background-clip:text;color:transparent}
@@ -146,7 +136,6 @@ table.t{width:100%;border-collapse:collapse;font-size:14px}
 .hstat.risk b small{font-size:20px}
 .hstat span{font-size:14px}
 .hint{width:100%;max-width:760px;padding:12px 16px;border-radius:14px;background:rgba(254,243,199,.95);color:#713f12;font-weight:600}
-/* หน้าวิกฤติ */
 .riskbig{display:flex;gap:22px;align-items:center;flex-wrap:wrap}
 .riskcircle{width:150px;height:150px;border-radius:50%;display:grid;place-items:center;color:#fff;font-family:Prompt;text-align:center;box-shadow:0 10px 24px rgba(0,0,0,.25),inset 0 -8px 16px rgba(0,0,0,.2),inset 0 6px 12px rgba(255,255,255,.35)}
 .riskcircle b{font-size:56px;line-height:1}
@@ -154,7 +143,6 @@ table.t{width:100%;border-collapse:collapse;font-size:14px}
 .idx>div{display:flex;justify-content:space-between;padding:8px 12px;border-radius:10px;background:#f1f5f9}
 .scale{display:flex;gap:4px;margin-top:14px}.scale span{flex:1;text-align:center;color:#fff;font-size:12px;padding:5px 0;border-radius:6px;font-weight:700}
 .crit{font-size:14px;line-height:1.9}
-/* Admin */
 .login{max-width:420px;margin:40px auto;text-align:center}
 .login input{width:100%;margin:14px 0}
 .formbar{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin-bottom:14px}
@@ -223,7 +211,7 @@ textarea{width:100%;min-height:90px;font-family:monospace}
       </div>
       <div class="hero-card green">
         <div class="hc-icon">🗂️</div><h3>สำหรับเจ้าหน้าที่การเงิน</h3>
-        <p>กรอก/แก้ไขข้อมูลรายเดือน แผนประจำปี และทะเบียนเจ้าหนี้</p>
+        <p>กรอก/แก้ไขข้อมูลรายเดือน แผนประจำปี ทะเบียนเจ้าหนี้ และอ่านรูปภาพอัตโนมัติด้วย AI</p>
         <button class="btn btn-green big" onclick="go('admin')">เข้าสู่ระบบ Admin ➜</button>
         <small>ต้องใช้รหัสผ่าน</small>
       </div>
@@ -363,7 +351,6 @@ textarea{width:100%;min-height:90px;font-family:monospace}
     <div class="card">
       <h3>📝 รายงานสำหรับเสนอผู้บริหาร
         <span class="tools no-print">
-          <label class="chk"><input type="checkbox" id="thaiNum" onchange="setThai(this.checked)"> ใช้เลขไทย</label>
           <button class="btn btn-gold sm" onclick="copyEl('rptBody')">📋 คัดลอกทั้งหมด</button>
           <button class="btn btn-green sm" onclick="downloadDoc()">📄 ดาวน์โหลด Word</button>
         </span></h3>
@@ -399,6 +386,15 @@ textarea{width:100%;min-height:90px;font-family:monospace}
           <label class="chk"><input type="checkbox" id="aCum" onchange="fillMonthForm()"> กรอกรายได้/ค่าใช้จ่าย/รับ-จ่ายเป็น "ยอดสะสม" (ระบบแปลงเป็นรายเดือนให้)</label>
         </div>
         <div class="status-line" id="aStatus"></div>
+        
+        <!-- ส่วนอัปโหลดรูปภาพให้ AI อ่าน -->
+        <div class="card" style="background:linear-gradient(135deg,#ecfdf5,#d1fae5);border:2px dashed #10b981;margin-bottom:14px">
+          <h3 style="color:#065f46">🤖 อ่านข้อมูลจากรูปภาพอัตโนมัติด้วย AI</h3>
+          <p class="note" style="color:#047857;margin-bottom:8px">อัปโหลดรูปภาพรายงานทางการเงินหรือตารางงบทดลอง AI จะดึงตัวเลขมาเติมลงฟอร์มข้างล่างนี้ให้ทันที</p>
+          <input type="file" id="aiImageFile" accept="image/*" style="display:none" onchange="handleAIImage(this)">
+          <button class="btn btn-green" onclick="$('#aiImageFile').click()">📸 เลือกรูปภาพรายงานเพื่อกรอกอัตโนมัติ</button>
+        </div>
+
         <details class="fgroup"><summary>📋 วางข้อมูลจาก Excel (คอลัมน์แรก = รหัส เช่น P04, คอลัมน์สุดท้าย = จำนวนเงิน)</summary>
           <div style="padding:14px"><textarea id="pasteBox" placeholder="P04	รายได้ UC	39,435,763.93"></textarea>
           <button class="btn btn-gold sm" style="margin-top:8px" onclick="pasteFill()">เติมลงฟอร์ม</button></div></details>
@@ -461,7 +457,7 @@ textarea{width:100%;min-height:90px;font-family:monospace}
 
 <script>
 /* ===================== ตั้งค่า ===================== */
-const API_URL = 'https://script.google.com/macros/s/AKfycbxfzup8_kKBGjz51RhWQc-sYtrn38JiFI9vcZ2NtI41CTcAetgLFe0ngOttIcA1WpfO/exec';  // <-- ใส่ URL Web App
+const API_URL = 'https://script.google.com/macros/s/AKfycbwExOh3f634GvQQOr3CwZpPgfRvIFDpIZBIT1z_uE9eoZ2y4k4v6KElFy0TojVae-5Y/exec';  // <-- ใส่ URL Web App
 const HOSPITAL = 'โรงพยาบาลเขาสุกิม';
 
 /* ===================== ข้อมูลรายการ ===================== */
@@ -489,15 +485,15 @@ const CRED_GROUPS=['ยา/เวชภัณฑ์/วัสดุการแ�
 
 /* ===================== State & helpers ===================== */
 let D={},P={},CRED=[],UPDATED='';
-const S={ctype:localStorage.getItem('ctype')||'bar',gran:localStorage.getItem('gran')||'m',thai:localStorage.getItem('thai')==='1'};
+const S={ctype:localStorage.getItem('ctype')||'bar',gran:localStorage.getItem('gran')||'m'};
 const CH={};
 const $=s=>document.querySelector(s);
-const fmt=(x,d=2)=>x==null||isNaN(x)?'-':Number(x).toLocaleString('th-TH',{minimumFractionDigits:d,maximumFractionDigits:d});
+const fmt=(x,d=2)=>x==null||isNaN(x)?'-':Number(x).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
 const fmtM=x=>x==null||isNaN(x)?'-':fmt(x/1e6,2)+' ล้านบาท';
 const fmtShort=v=>Math.abs(v)>=1e6?(v/1e6).toFixed(1)+'M':Math.abs(v)>=1e3?(v/1e3).toFixed(0)+'K':v;
 const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
 const n0=x=>x==null?0:x;
-const TH=s=>S.thai?String(s).replace(/[0-9]/g,d=>'๐๑๒๓๔๕๖๗๘๙'[d]):String(s);
+const TH=s=>String(s);
 function curFY(){const d=new Date();return d.getFullYear()+543+(d.getMonth()>=9?1:0);}
 function monthLabel(fy,m){return MONTHS[m-1]+'-'+String((m<=3?fy-1:fy)%100).padStart(2,'0');}
 function monthFull(fy,m){return MONTH_FULL[m-1]+' '+(m<=3?fy-1:fy);}
@@ -591,7 +587,6 @@ function syncSeg(){
 }
 function setCT(t){S.ctype=t;localStorage.setItem('ctype',t);renderAll();}
 function setGran(g){S.gran=g;localStorage.setItem('gran',g);renderAll();}
-function setThai(b){S.thai=b;localStorage.setItem('thai',b?'1':'0');renderAll();}
 
 /* ===================== Series (รายเดือน/รายไตรมาส) ===================== */
 function axisLabels(y){return S.gran==='q'?QL:MONTHS.map((x,i)=>y?monthLabel(y,i+1):x);}
@@ -605,7 +600,7 @@ Chart.defaults.font.family="'Sarabun','Prompt',sans-serif";Chart.defaults.font.s
 function chart(id,cfg){if(CH[id])CH[id].destroy();const el=document.getElementById(id);if(el)CH[id]=new Chart(el,cfg);}
 function hexA(h,a){const n=parseInt(h.slice(1),16);return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`;}
 function DS(label,data,color,o={}){const t=o.type||S.ctype;const d={type:t,label,data,borderColor:color,backgroundColor:color,order:o.order??2};
- if(t==='line')Object.assign(d,{tension:.35,borderWidth:o.bw||3,pointRadius:o.pr??4,pointHoverRadius:6,fill:false,spanGaps:true,borderDash:o.dash||[]});
+ if(t==='line')Object.assign(d,{tension:.35,borderWidth:o.bw||3,pointRadius:o.pr||4,pointHoverRadius:6,fill:false,spanGaps:true,borderDash:o.dash||[]});
  else Object.assign(d,{borderRadius:8,maxBarThickness:46,backgroundColor:o.dash?hexA(color,.4):color,borderWidth:o.dash?2:0});
  return d;}
 function riskDS(label,rs,o={}){const sc=rs.map(r=>r?r.score:null),cols=rs.map(r=>r?RISK_COLORS[r.score]:'#cbd5e1');
@@ -801,7 +796,6 @@ function renderCompare(){
  $('#cmpNarr').innerHTML=narrHTML([narrCompare()]);
 }
 
-/* ---- เทียบปีแยกรายการ (การ์ดละ 1 รายการ) ---- */
 function itemSentence(n,a,b,better,u){const{y,cmp}=S;
  if(a==null||(a===0&&b))return `${n} ยังไม่มีข้อมูลของปีงบ ${y} ในช่วงเวลานี้`;
  if(b==null||b===0)return `${n} ปีงบ ${y} มีมูลค่า ${fmt(a)}${u} ยังไม่มีข้อมูลปีงบ ${cmp} สำหรับเปรียบเทียบ`;
@@ -850,7 +844,7 @@ function narrCashIn(){
  const desc=x=>`${x.n} จัดเก็บใน${pi.word}นี้ได้ ${Bt(x.per)}${x.pct!=null?` (ยอดสะสม${PC(x.pct)})`:` (ยอดสะสม ${Bt(x.cum)} ไม่มีแผนประมาณการ)`}`;
  const got=it.filter(x=>x.per!==0);
  const hi=got.filter(x=>x.pct!=null&&x.pct>=tp).sort((a,b)=>b.per-a.per);
- const lo=got.filter(x=>x.pct!=null&&x.pct<tp).sort((a,b)=>a.pct-b.pct);
+ const lo=got.filter(x=>x.pct!=null&&x.pct<tp).sort((a,b)=>b.pct-a.pct);
  const np=got.filter(x=>x.pct==null);
  const zero=it.filter(x=>x.per===0&&(x.pl||x.cum));
  if(hi.length)p1+=` โดยมีหมวดรายได้หลักที่จัดเก็บได้สูงกว่าแผนประมาณการ ได้แก่ ${joinTH(hi.map(desc))}`;
@@ -963,7 +957,7 @@ function narrCompare(){
  const txt=x=>`${x.n} ${Bt(x.a)} (${x.d>=0?'เพิ่มขึ้น':'ลดลง'} ${Bt(Math.abs(x.d))}${x.p!=null?` หรือ${PC(Math.abs(x.p))}`:''})`;
  const I=diffs('income'),E=diffs('expense');
  const iu=I.filter(x=>x.d>0).sort((a,b)=>b.d-a.d).slice(0,3),idn=I.filter(x=>x.d<0).sort((a,b)=>a.d-b.d).slice(0,3);
- const eu=E.filter(x=>x.d>0).sort((a,b)=>b.d-a.d).slice(0,3),edn=E.filter(x=>x.d<0).sort((a,b)=>a.d-b.d).slice(0,3);
+ const eu=E.filter(x=>x.d>0).sort((a,b)=>b.d-a.d).slice(0,3),edn=E.filter(x=>x.d<0).sort((a,b)=>b.d-a.d).slice(0,3);
  let p2='ด้านรายได้ ';p2+=iu.length?`รายการที่เพิ่มขึ้นมากที่สุด ได้แก่ ${joinTH(iu.map(txt))}`:'ไม่มีรายการที่เพิ่มขึ้น';p2+=idn.length?` ส่วนรายการที่ลดลง ได้แก่ ${joinTH(idn.map(txt))}`:'';
  let p3='ด้านค่าใช้จ่าย ';p3+=eu.length?`รายการที่เพิ่มขึ้นมากที่สุด ได้แก่ ${joinTH(eu.map(txt))}`:'ไม่มีรายการที่เพิ่มขึ้น';p3+=edn.length?` ส่วนรายการที่ลดลง ได้แก่ ${joinTH(edn.map(txt))}`:'';
  const r1=risk(y,m),r0=risk(cmp,m);
@@ -972,7 +966,6 @@ function narrCompare(){
 }
 function renderReport(){
  const{y}=S;$('#rptTitle').textContent=`ปีงบ ${y} · ${periodText()} · เทียบปีงบ ${S.cmp}`;
- $('#thaiNum').checked=S.thai;
  const sec=(t,list)=>{const h=narrHTML(list);return `<h4>${TH(t)}</h4>`+h.replace(/<h4>/g,'<h4 style="border-left-color:#10b981">');};
  $('#rptBody').innerHTML=
   sec('ส่วนที่ 1 ผลการดำเนินงานตามแผน Planfin',[narrPlanfin()])+
@@ -990,11 +983,40 @@ function downloadDoc(){
 function exportCSV(id,name){const rows=[...document.querySelectorAll('#'+id+' tr')].map(tr=>[...tr.children].map(td=>'"'+td.innerText.replace(/"/g,'""')+'"').join(','));
  const blob=new Blob(['\ufeff'+rows.join('\n')],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`${name}_${S.y}_${S.m}.csv`;a.click();}
 
-/* ===================== ADMIN ===================== */
+/* ===================== ADMIN & AI OCR ===================== */
 function checkLogin(){const ok=!!sessionStorage.getItem('pw');$('#loginBox').style.display=ok?'none':'block';$('#adminBox').style.display=ok?'block':'none';if(ok){fillMonthForm();fillPlanForm();fillCredForm();}}
 async function login(){const pw=$('#pw').value;if(!pw)return toast('กรุณาใส่รหัสผ่าน','err');
  try{await api('login',{password:pw});sessionStorage.setItem('pw',pw);$('#pw').value='';toast('เข้าสู่ระบบสำเร็จ');checkLogin();}catch(e){toast(e.message,'err');}}
 function logout(){sessionStorage.removeItem('pw');checkLogin();}
+
+async function handleAIImage(input){
+ const file=input.files[0];if(!file)return;
+ const reader=new FileReader();
+ reader.onload=async function(e){
+  const base64=e.target.result.split(',')[1];
+  const mimeType=file.type;
+  toast('🤖 AI กำลังอ่านรูปภาพ กรุณารอสักครู่...');
+  showLoading(true);
+  try{
+   const res=await api('parseImage',{image:base64,mimeType});
+   const vals=res.values||{};
+   let filled=0;
+   Object.keys(vals).forEach(c=>{
+    const el=$('#in_'+c);
+    if(el){el.value=vals[c];filled++;}
+   });
+   calcTotals();
+   toast(`AI อ่านและเติมข้อมูลสำเร็จ ${filled} รายการ ✔`);
+  }catch(err){
+   toast('อ่านรูปไม่สำเร็จ: '+err.message,'err');
+  }finally{
+   showLoading(false);
+   input.value='';
+  }
+ };
+ reader.readAsDataURL(file);
+}
+
 function groupHTML(g,prefix,totalId,open,items,title,isFlow){
  return `<details class="fgroup" ${open?'open':''}><summary><span>${title}</span>${isFlow?`<span class="gt" id="${totalId}">0.00</span>`:''}</summary><div class="fgrid">${items.map(([c,n])=>`<label class="fi"><span><b>${c}</b> ${n}</span><input id="${prefix}${c}" data-g="${g}" inputmode="decimal" placeholder="0.00" oninput="calcTotals()"></label>`).join('')}</div></details>`;}
 function buildMonthForm(){$('#monthForm').innerHTML=FORM_GROUPS.map(g=>groupHTML(g,'in_','gt_'+g,['income','expense','crisis'].includes(g),GROUPS[g].items,GROUPS[g].title,GROUPS[g].type==='flow')).join('');}
