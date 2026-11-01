@@ -368,7 +368,8 @@ async function saveCostBenchmark(){
  const y=+$('#costYear').value, payload={year:y,quarter:+$('#costQuarter').value,hospTotal:+$('#costHospTotal').value,hospUsed:+$('#costHospUsed').value,ipUsed:+$('#costIPUsed').value,opMean:+$('#costOPMean').value,opSd:+$('#costOPSD').value,opLimit:+$('#costOPLimit').value,ipMean:+$('#costIPMean').value,ipSd:+$('#costIPSD').value,ipLimit:+$('#costIPLimit').value};
  try{await api('saveCostBenchmark',payload);if([...$('#fYear').options].some(o=>+o.value===y))$('#fYear').value=String(y);$('#fQuarter').value=String(payload.quarter);onFilter();toast('บันทึกค่าเฉลี่ยกลุ่มต้นทุนรายไตรมาสแล้ว');}catch(e){toast(e.message,'err');}
 }
-function onFilter(){buildDashboard();if(document.querySelector('#p-cashin.show'))renderCashPanel('cashIn');if(document.querySelector('#p-cashout.show'))renderCashPanel('cashOut');if(document.querySelector('#p-crisis.show'))renderCashPanel('crisis');if(document.querySelector('#p-cost.show'))renderCostDashboard();}
+function onFilter(changed){if(changed==='y')refreshDashMonthOptions();buildDashboard();if(document.querySelector('#p-cashin.show'))renderCashPanel('cashIn');if(document.querySelector('#p-cashout.show'))renderCashPanel('cashOut');if(document.querySelector('#p-crisis.show'))renderCashPanel('crisis');if(document.querySelector('#p-cost.show'))renderCostDashboard();}
+function refreshDashMonthOptions(preferred){const fy=+$('#fYear').value;if(!fy)return;const old=preferred??$('#fMonth').value;$('#fMonth').innerHTML=MONTHS.map((x,i)=>`<option value="${i+1}">${monthLabel(fy,i+1)}</option>`).join('');if(old&&[...$('#fMonth').options].some(o=>o.value===String(old)))$('#fMonth').value=String(old);}
 
 
 function checkLogin(){
@@ -395,12 +396,11 @@ function buildFilters(){
  const ys=[...new Set([curFY(),...Object.keys(D).map(Number),...CRED.map(r=>r.y),...COST.map(r=>+r.y)])].sort((a,b)=>b-a);
  const keepY=$('#aYear').value,keepM=$('#aMonth').value,keepFY=dashFiltersInitialized?$('#fYear').value:'',keepFM=dashFiltersInitialized?$('#fMonth').value:'';
  $('#fYear').innerHTML=ys.map(y=>`<option value="${y}">ปีงบ ${y}</option>`).join('');
- $('#fMonth').innerHTML=MONTHS.map((x,i)=>`<option value="${i+1}">${monthLabel(ys[0],i+1)}</option>`).join('');
  $('#aYear').innerHTML=ys.map(y=>`<option value="${y}">ปีงบ ${y}</option>`).join('');
  $('#aMonth').innerHTML=MONTHS.map((x,i)=>`<option value="${i+1}">${x}</option>`).join('');
  if(keepY&&ys.includes(+keepY))$('#aYear').value=keepY; if(keepM)$('#aMonth').value=keepM;
  if(keepFY&&ys.includes(+keepFY))$('#fYear').value=keepFY;
- const fy=+$('#fYear').value;const avail=(D[fy]?Object.keys(D[fy]).map(Number):[]);if(keepFM&&avail.includes(+keepFM))$('#fMonth').value=keepFM;else $('#fMonth').value=String(avail.length?Math.max(...avail):12);
+ const fy=+$('#fYear').value;refreshDashMonthOptions(keepFM);const avail=(D[fy]?Object.keys(D[fy]).map(Number):[]);if(keepFM&&avail.includes(+keepFM))$('#fMonth').value=keepFM;else $('#fMonth').value=String(avail.length?Math.max(...avail):12);
  dashFiltersInitialized=true;fillMonthForm();populateAllDashboardSelectors();
 }
 
