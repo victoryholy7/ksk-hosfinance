@@ -323,34 +323,71 @@ function resizeImage(file,maxSide=1800){
  });
 }
 
+// แปลงรหัสที่ AI ตอบ ให้เป็น id ของช่องในฟอร์ม โดยดูตามชนิดรายงาน
+// (กลุ่มเงินบำรุงใช้ id ลงท้าย _cashIn / _cashOut ส่วนกลุ่มหลักใช้ id ปกติ)
+function mapAiCode(type,k){
+ let c=String(k).toUpperCase().replace(/[\s.]/g,'');
+ if(c==='P61')c='P061';
+ if(type==='cash'){
+  if(c==='P99_IN'||c==='P99IN')return 'P99_cashIn';
+  if(c==='P99_OUT'||c==='P99OUT')return 'P99_cashOut';
+  if(/^P(0[4-9]|1[0-3]|061)$/.test(c))return c+'_cashIn';
+  if(/^P(1[4-9]|2[0-8]|151)$/.test(c))return c+'_cashOut';
+  return null;
+ }
+ if(type==='planfin'){
+  if(c==='P40')return 'NWC';
+  return c;
+ }
+ return null;
+}
+
 async function handleAIImage(input){
  const file=input.files[0];if(!file)return;
- toast('🤖 AI กำลังอ่านรูปภาพ... (อาจใช้เวลา 10-30 วินาที)');
+ toast('🤖 AI กำลังอ่านรูปภาพ... (อาจใช้เวลา 10-60 วินาที)');
  try{
   const base64=await resizeImage(file);
   const res=await api('parseImage',{image:base64,mimeType:'image/jpeg'});
   const r=res.result||{};
+  const type=String(r.report_type||'').toLowerCase();
   const vals=r.values||{};
+  const hasVals=Object.keys(vals).length>0;
+
+  if(hasVals&&type!=='cash'&&type!=='planfin'){
+   throw new Error('AI ระบุชนิดรายงานไม่ได้ (ต้องเป็นรายงานเงินบำรุง หรือ Planfin) ลองถ่ายให้เห็นหัวรายงานชัดๆ แล้วลองใหม่');
+  }
 
   document.querySelectorAll('.fi input.ai-filled').forEach(x=>x.classList.remove('ai-filled'));
   let filled=0;
   Object.entries(vals).forEach(([k,val])=>{
-   let c=String(k).toUpperCase().trim();
-   if(c==='P61')c='P061';
-   const el=document.getElementById('in_'+c);
+   const id=mapAiCode(type,k);if(!id)return;
+   const el=document.getElementById('in_'+id);
    const num=parseNum(val);
-   if(el&&num!=null){el.value=num;el.classList.add('ai-filled');filled++;}
+   if(el&&num!=null){
+    el.value=num;el.classList.add('ai-filled');filled++;
+    const d=el.closest('details');if(d)d.open=true;
+   }
   });
-  // AI อ่านจากคอลัมน์ "ยอดสะสม" จึงติ๊กช่อง "กรอกยอดสะสม" ให้อัตโนมัติ
+  // รายงานทั้งสองชนิดแสดงยอดสะสม จึงติ๊ก "กรอกยอดสะสม" ให้อัตโนมัติ
   if(filled>0)$('#aCum').checked=true;
 
   const creds=Array.isArray(r.creditors)?r.creditors:[];
   if(creds.length)fillCredForm(creds.map(c=>({n:c.n,g:c.g,a:parseNum(c.a)??0})));
 
+  // เตือนถ้าเดือนในรูปไม่ตรงกับเดือนที่เลือกในฟอร์ม
+  let warn='';
+  const rm=+r.report_month,ry=+r.report_year_be;
+  if(rm>=1&&rm<=12&&ry>2500){
+   const fm=((rm-10+12)%12)+1,fy=ry+(rm>=10?1:0);
+   const sy=+$('#aYear').value,sm=+$('#aMonth').value;
+   if(fy!==sy||fm!==sm)warn=` ⚠️ รูปนี้เป็นรายงานเดือน ${monthLabel(fy,fm)} แต่ฟอร์มเลือก ${monthLabel(sy,sm)} กรุณาตรวจสอบเดือนก่อนบันทึก`;
+  }
+
   calcTotals();
+  const label={cash:'รายงานเงินบำรุง',planfin:'รายงาน Planfin',creditors:'ตารางเจ้าหนี้'}[type]||'รายงาน';
   const ok=filled||creds.length;
-  toast(ok?`AI อ่านสำเร็จ: ข้อมูล ${filled} รายการ, เจ้าหนี้ ${creds.length} รายการ ✔ (ตรวจสอบก่อนกดบันทึก)`
-          :'AI อ่านรูปแล้วแต่ไม่พบข้อมูลที่ตรงกับฟอร์ม',ok?'':'err');
+  toast(ok?`AI อ่าน${label}สำเร็จ: ข้อมูล ${filled} รายการ, เจ้าหนี้ ${creds.length} รายการ ✔ (ตรวจสอบก่อนกดบันทึก)${warn}`
+          :'AI อ่านรูปแล้วแต่ไม่พบข้อมูลที่ตรงกับฟอร์ม',(ok&&!warn)?'':'err');
  }catch(e){
   toast('อ่านรูปไม่สำเร็จ: '+e.message,'err');
  }finally{
@@ -366,16 +403,19 @@ function calcTotals(){
  FORM_GROUPS.forEach(g=>{const el=$('#gt_'+g);if(el)el.textContent=fmt(GROUPS[g].items.reduce((s,[c])=>s+n0(parseNum(inputOf(g,c).value)),0));});
  credTotalUI();
 }
-// หา input ของรหัสในกลุ่มนั้น (กลุ่มเงินบำรุงใช้ id ต่างจากกลุ่มหลัก เพื่อไม่ให้ id ซ้ำ)
+// หา input ของรหัสในกลุ่มนั้น (กลุ่มเงินบำรุงใช้ id ลงท้าย _cashIn/_cashOut เพื่อไม่ให้ id ซ้ำ)
 function inputOf(g,c){return document.getElementById('in_'+c+(g==='cashIn'||g==='cashOut'?'_'+g:''));}
+
+// รหัสที่ใช้เก็บในฐานข้อมูล: กลุ่มเงินบำรุงใส่ prefix เพื่อไม่ให้ชนกับรหัส Planfin
+function codeOf(g,c){return g==='cashIn'?'CI_'+c:g==='cashOut'?'CO_'+c:c;}
 
 function fillMonthForm(){
  const y=+$('#aYear').value,m=+$('#aMonth').value,cum=$('#aCum').checked;if(!y||!m)return;
  FORM_GROUPS.forEach(g=>GROUPS[g].items.forEach(([c])=>{
   const el=inputOf(g,c);if(!el)return;
-  // กลุ่มเงินบำรุงยังไม่มีที่เก็บแยก: ให้ช่องว่างไว้ ไม่เอาค่าจากกลุ่มหลักมาปน
-  if(g==='cashIn'||g==='cashOut'){el.value='';el.classList.remove('ai-filled');return;}
-  const x=v(y,m,c);let val=x;if(cum&&GROUPS[g].type==='flow'&&x!=null)val=sumR(y,c,1,m);
+  const k=codeOf(g,c);
+  const x=v(y,m,k);let val=x;
+  if(cum&&GROUPS[g].type==='flow'&&x!=null)val=sumR(y,k,1,m);
   el.value=val==null?'':val;el.classList.remove('ai-filled');
  }));
  fillCredForm();
@@ -392,12 +432,13 @@ function copyPrevCred(){let y=+$('#aYear').value,m=+$('#aMonth').value-1;if(m<1)
 /* ---------- บันทึก / ลบ ---------- */
 async function saveMonthAndCred(){
  const y=+$('#aYear').value,m=+$('#aMonth').value,cum=$('#aCum').checked,values={};let err=null;
- // บันทึกเฉพาะกลุ่มหลัก (กลุ่มเงินบำรุงใช้รหัสซ้ำ จึงยังไม่บันทึกเพื่อไม่ให้ทับกัน)
- ['income','expense','balance','crisis'].forEach(g=>GROUPS[g].items.forEach(([c])=>{
+ // บันทึกทุกกลุ่ม: กลุ่มเงินบำรุงเก็บเป็นรหัส CI_xxx (รับ) / CO_xxx (จ่าย)
+ FORM_GROUPS.forEach(g=>GROUPS[g].items.forEach(([c])=>{
   const raw=inputOf(g,c).value.trim();if(raw==='')return;
-  let n=parseNum(raw);if(n==null){err=c;return;}
-  if(cum&&GROUPS[g].type==='flow')n=n-sumR(y,c,1,m-1);
-  values[c]=Math.round(n*100)/100;
+  const k=codeOf(g,c);
+  let n=parseNum(raw);if(n==null){err=GROUPS[g].title+' '+c;return;}
+  if(cum&&GROUPS[g].type==='flow')n=n-sumR(y,k,1,m-1);
+  values[k]=Math.round(n*100)/100;
  }));
  if(err)return toast('ตัวเลขไม่ถูกต้องที่ '+err,'err');
 
