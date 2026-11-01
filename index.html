@@ -117,6 +117,9 @@ table.t{width:100%;border-collapse:collapse;font-size:14px}
         <option value="ytd">สะสมตั้งแต่ต้นปีงบ (YTD)</option>
         <option value="mon">เฉพาะเดือนที่เลือก</option>
       </select></div>
+    <div class="f"><label>ไตรมาส</label><select id="fQuarter" onchange="onFilter()"><option value="all">ทั้งปีงบประมาณ</option><option value="1">ไตรมาส 1 (ต.ค.–ธ.ค.)</option><option value="2">ไตรมาส 2 (ม.ค.–มี.ค.)</option><option value="3">ไตรมาส 3 (เม.ย.–มิ.ย.)</option><option value="4">ไตรมาส 4 (ก.ค.–ก.ย.)</option></select></div>
+    <div class="f"><label>เปรียบเทียบ</label><select id="fCompare" onchange="onFilter()"><option value="prev">ปีก่อนหน้า</option><option value="none">ไม่เปรียบเทียบ</option></select></div>
+    <div class="f"><label>รูปแบบกราฟภาพรวม</label><select id="fChartType" onchange="onFilter()"><option value="line">กราฟเส้น</option><option value="bar">กราฟแท่ง</option></select></div>
     <div class="actions">
       <button class="btn btn-gold" onclick="loadData()">🔄 รีเฟรช</button>
       <button class="btn btn-green" onclick="window.print()">🖨️ พิมพ์หน้านี้</button>
@@ -126,11 +129,19 @@ table.t{width:100%;border-collapse:collapse;font-size:14px}
   <div class="tabs" id="dashTabs">
     <button class="tab active" onclick="dashTab('p-ov',this)">🏠 ภาพรวม</button>
     <button class="tab" onclick="dashTab('p-pf',this)">📋 Planfin</button>
+    <button class="tab" onclick="dashTab('p-cashin',this)">💰 รายรับ–เงินบำรุง</button>
+    <button class="tab" onclick="dashTab('p-cashout',this)">💸 รายจ่าย–เงินบำรุง</button>
+    <button class="tab" onclick="dashTab('p-crisis',this)">🚦 ตารางคำนวณวิกฤต</button>
+    <button class="tab" onclick="dashTab('p-cost',this)">📊 ต้นทุนหน่วยบริการ</button>
     <button class="tab" onclick="dashTab('p-cred',this)">🧾 เจ้าหนี้</button>
   </div>
-  <div class="dash-panel show" id="p-ov"><div class="grid g-kpi" id="ovKpi"></div><div class="grid g2"><div class="card"><h3>📊 รายได้ – ค่าใช้จ่าย</h3><div class="chart-box"><canvas id="ovTrend"></canvas></div></div><div class="card"><h3>💡 ประเด็นสำคัญ</h3><ul class="ins" id="ovIns"></ul></div></div></div>
-  <div class="dash-panel" id="p-pf"><div class="card"><div class="tbl-wrap"><table class="t" id="pfTable"></table></div></div></div>
-  <div class="dash-panel" id="p-cred"><div class="card"><div class="tbl-wrap"><table class="t" id="credTable"></table></div></div></div>
+  <div class="dash-panel show" id="p-ov"><div class="grid g-kpi" id="ovKpi"></div><div class="grid g2"><div class="card"><h3>📊 รายได้ – ค่าใช้จ่าย</h3><div class="chart-box"><canvas id="ovTrend"></canvas></div></div><div class="card"><h3>💡 วิเคราะห์สำหรับกลุ่มงานบริหารทั่วไป</h3><ul class="ins" id="ovIns"></ul></div></div><div class="card"><h3>📈 เปรียบเทียบรายหมวด</h3><div class="tbl-wrap"><table class="t" id="ovCompare"></table></div></div></div>
+  <div class="dash-panel" id="p-pf"><div class="card"><h3>📋 วิเคราะห์ข้อมูล Planfin แยกรายการ</h3><div class="formbar"><div><label>หมวดข้อมูล</label><select id="pfGroup" onchange="populateDetailItems();renderDetailDashboard()"><option value="income">รายได้ Planfin</option><option value="expense">ค่าใช้จ่าย Planfin</option><option value="balance">ฐานะการเงิน</option></select></div><div><label>รายการ</label><select id="pfItem" onchange="renderDetailDashboard()"></select></div><div><label>รูปแบบกราฟ</label><select id="chartType" onchange="renderDetailDashboard()"><option value="bar">กราฟแท่ง</option><option value="line">กราฟเส้น</option></select></div></div><div class="chart-box"><canvas id="detailChart"></canvas></div><div id="detailAnalysis" class="status-line"></div></div><div class="card"><h3>📑 ตารางข้อมูล Planfin</h3><div class="tbl-wrap"><table class="t" id="pfTable"></table></div></div></div>
+  <div class="dash-panel" id="p-cashin"><div class="card"><h3>💰 วิเคราะห์รายรับ–เงินบำรุง</h3><div class="formbar"><div><label>เลือกรายการ</label><select id="cashInItem" onchange="renderCashPanel('cashIn')"></select></div><div><label>รูปแบบกราฟ</label><select id="cashInChartType" onchange="renderCashPanel('cashIn')"><option value="bar">กราฟแท่ง</option><option value="line">กราฟเส้น</option></select></div></div><div class="chart-box"><canvas id="cashInChart"></canvas></div><div id="cashInAnalysis" class="status-line"></div><div class="tbl-wrap"><table class="t" id="cashInTable"></table></div></div></div>
+  <div class="dash-panel" id="p-cashout"><div class="card"><h3>💸 วิเคราะห์รายจ่าย–เงินบำรุง</h3><div class="formbar"><div><label>เลือกรายการ</label><select id="cashOutItem" onchange="renderCashPanel('cashOut')"></select></div><div><label>รูปแบบกราฟ</label><select id="cashOutChartType" onchange="renderCashPanel('cashOut')"><option value="bar">กราฟแท่ง</option><option value="line">กราฟเส้น</option></select></div></div><div class="chart-box"><canvas id="cashOutChart"></canvas></div><div id="cashOutAnalysis" class="status-line"></div><div class="tbl-wrap"><table class="t" id="cashOutTable"></table></div></div></div>
+  <div class="dash-panel" id="p-crisis"><div class="card"><h3>🚦 ตารางคำนวณอัตราส่วนทางการเงิน (วิกฤต 7 ระดับ)</h3><div class="formbar"><div><label>รายการอัตราส่วน</label><select id="crisisItem" onchange="renderCashPanel('crisis')"></select></div><div><label>รูปแบบกราฟ</label><select id="crisisChartType" onchange="renderCashPanel('crisis')"><option value="line">กราฟเส้น</option><option value="bar">กราฟแท่ง</option></select></div></div><div class="chart-box"><canvas id="crisisChart"></canvas></div><div id="crisisAnalysis" class="status-line"></div><div class="tbl-wrap"><table class="t" id="crisisTable"></table></div></div></div>
+  <div class="dash-panel" id="p-cost"><div class="card"><h3>📊 ค่าเฉลี่ยและกลุ่มต้นทุนหน่วยบริการรายไตรมาส</h3><div class="note">เปรียบเทียบค่าเฉลี่ย +1SD ของกลุ่มโรงพยาบาลระดับเดียวกัน โดยแสดงข้อมูลที่บันทึกไว้ในระบบ</div><div class="formbar"><div><label>ตัวชี้วัดต้นทุน</label><select id="costMetric" onchange="renderCostDashboard()"><option value="op">ต้นทุนผู้ป่วยนอก (OPD)</option><option value="ip">ต้นทุนผู้ป่วยใน (IPD)</option></select></div><div><label>รูปแบบกราฟ</label><select id="costChartType" onchange="renderCostDashboard()"><option value="bar">กราฟแท่ง</option><option value="line">กราฟเส้น</option></select></div></div><div class="chart-box"><canvas id="costChart"></canvas></div><div id="costAnalysis" class="status-line"></div><div class="tbl-wrap"><table class="t" id="costTable"></table></div></div></div>
+  <div class="dash-panel" id="p-cred"><div class="card"><h3>🧾 ทะเบียนเจ้าหนี้คงเหลือ ณ สิ้นเดือน</h3><div class="tbl-wrap"><table class="t" id="credTable"></table></div></div></div>
 </section>
 
 <section id="v-admin" class="view">
@@ -172,6 +183,7 @@ table.t{width:100%;border-collapse:collapse;font-size:14px}
             <h3 style="margin:0">🧾 ทะเบียนเจ้าหนี้คงเหลือ ณ สิ้นเดือนนี้</h3>
             <div>
               <button class="btn btn-gold sm" onclick="copyPrevCred()">📄 คัดลอกจากเดือนก่อน</button>
+              <button class="btn btn-gold sm" onclick="addCredPreset()">📑 เพิ่มรายการตามแบบรายงาน</button>
               <button class="btn btn-gold sm" onclick="addCredRow()">➕ เพิ่มรายการเจ้าหนี้</button>
             </div>
           </div>
@@ -180,6 +192,13 @@ table.t{width:100%;border-collapse:collapse;font-size:14px}
             <tbody id="credBody"></tbody><tfoot><tr class="total"><td colspan="2">รวมเจ้าหนี้</td><td class="num" id="credTot">0.00</td><td></td></tr></tfoot></table></div>
         </div>
 
+        <div class="card" style="margin-top:18px;border:1px solid #0ea5e9">
+          <h3>📊 บันทึกค่าเฉลี่ย +1SD กลุ่มต้นทุนหน่วยบริการรายไตรมาส</h3>
+          <div class="formbar"><div><label>ปีงบประมาณของข้อมูลต้นทุน</label><input id="costYear" type="number" min="2500" value="2569"></div><div><label>ไตรมาส</label><select id="costQuarter"><option value="1">ไตรมาส 1</option><option value="2">ไตรมาส 2</option><option value="3" selected>ไตรมาส 3</option><option value="4">ไตรมาส 4</option></select></div><div><label>จำนวนโรงพยาบาลทั้งหมด</label><input id="costHospTotal" type="number" min="0" value="282"></div><div><label>จำนวน รพ. ใช้คำนวณ</label><input id="costHospUsed" type="number" min="0" value="269"></div><div><label>จำนวน รพ. IPD ใช้คำนวณ</label><input id="costIPUsed" type="number" min="0" value="263"></div></div>
+          <div class="grid g2"><div><b>ต้นทุนผู้ป่วยนอก (OPD)</b><div class="formbar"><div><label>Mean</label><input id="costOPMean" type="number" step="0.01" value="916.01"></div><div><label>1SD</label><input id="costOPSD" type="number" step="0.01" value="132.98"></div><div><label>Mean + 1SD</label><input id="costOPLimit" type="number" step="0.01" value="1048.99"></div></div></div><div><b>ต้นทุนผู้ป่วยใน (IPD)</b><div class="formbar"><div><label>Mean</label><input id="costIPMean" type="number" step="0.01" value="14465.04"></div><div><label>1SD</label><input id="costIPSD" type="number" step="0.01" value="3863.89"></div><div><label>Mean + 1SD</label><input id="costIPLimit" type="number" step="0.01" value="18328.93"></div></div></div></div>
+          <button class="btn btn-green" onclick="saveCostBenchmark()">💾 บันทึกข้อมูลต้นทุนรายไตรมาส</button>
+          <p class="note">ตัวเลขตั้งต้นเป็นค่าจากภาพตัวอย่างกลุ่ม รพช. F2 ประชากรไม่เกิน 30,000 คน ไตรมาส 3/2569 โปรดตรวจสอบ/แก้ไขก่อนบันทึก</p>
+        </div>
         <div class="savebar">
           <button class="btn btn-red" onclick="deleteMonth()">🗑️ ลบข้อมูลเดือนนี้</button>
           <button class="btn btn-green big" onclick="saveMonthAndCred()">💾 บันทึกข้อมูลและเจ้าหนี้ทั้งหมด</button>
@@ -220,16 +239,16 @@ const GROUPS={
  cashOut:{title:'เงินบำรุง – รายจ่าย',type:'flow',items:[['P14','ค่ายา'],['P15','เวชภัณฑ์มิใช่ยาและวัสดุการแพทย์'],['P151','วัสดุทันตกรรม'],['P16','วัสดุวิทยาศาสตร์การแพทย์'],['P17','เงินเดือนและค่าจ้างประจำ'],['P18','ค่าจ้างชั่วคราว'],['P19','ค่าตอบแทน'],['P20','ค่าใช้จ่ายบุคลากรอื่น'],['P21','ค่าใช้สอย/โครงการ'],['P22','ค่าสาธารณูปโภค'],['P23','วัสดุ'],['P25','ค่าใช้จ่ายอื่น'],['P26','ครุภัณฑ์ต่ำกว่าเกณฑ์'],['P27','ครุภัณฑ์งบค่าเสื่อม'],['P28','งบกลาง'],['P99','จ่ายเงินรับฝาก']]}
 };
 const FORM_GROUPS=['income','expense','balance','crisis','cashIn','cashOut'];
-const CRED_GROUPS=['ยา/เวชภัณฑ์/วัสดุการแพทย์','วัสดุอื่น','ครุภัณฑ์/งบลงทุน','ค่าจ้างเหมา','ค่าตรวจ Lab/CT/MRI','ค่าสาธารณูปโภค','ค่ารักษาส่งต่อ OP-UC','ค่าตอบแทน','อื่นๆ'];
+const CRED_GROUPS=['เจ้าหนี้ค่ายา','วัสดุทันตกรรม/เวชภัณฑ์มิใช่ยา','วัสดุวิทยาศาสตร์การแพทย์','วัสดุทั่วไป','ครุภัณฑ์','ครุภัณฑ์ต่ำกว่าเกณฑ์','งบลงทุน UC','ค่าจ้างเหมา','ค่าตรวจห้องปฏิบัติการ','ค่าตรวจ CT Scan','ค่าตรวจ MRI','ค่าสาธารณูปโภค','ค่ารักษา OP-UC นอก CUP ในจังหวัด','ค่ารักษา OP-UC นอก CUP ต่างจังหวัด','ค่ารักษา OP-UC นอกสังกัด สป.','ค่าใช้จ่ายโครงการ','ค่าตอบแทนฉบับ 11','ค่าตอบแทนนอกเวลา','อื่นๆ'];
 
-let D={},P={},CRED=[];
+let D={},P={},CRED=[],COST=[],dashFiltersInitialized=false;
 const $=s=>document.querySelector(s);
 const fmt=(x,d=2)=>x==null||isNaN(x)?'-':Number(x).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
 const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
 const n0=x=>x==null?0:x;
 function curFY(){const d=new Date();return d.getFullYear()+543+(d.getMonth()>=9?1:0);}
 function monthLabel(fy,m){return MONTHS[m-1]+'-'+String((m<=3?fy-1:fy)%100).padStart(2,'0');}
-function ingest(j){D={};P={};CRED=j.creditors||[];
+function ingest(j){D={};P={};CRED=j.creditors||[];COST=j.costBenchmarks||[];
  (j.data||[]).forEach(r=>{(D[r.y]??={});(D[r.y][r.m]??={});D[r.y][r.m][r.c]=Number(r.v);});}
 const v=(y,m,c)=>D[y]?.[m]?.[c];
 function showLoading(b){$('#loading').classList.toggle('show',b);}
@@ -237,7 +256,7 @@ let tt;function toast(msg,type){const t=$('#toast');t.textContent=msg;t.classNam
 
 async function loadData(){
  showLoading(true);
- try{const r=await fetch(API_URL+'?action=getAll&t='+Date.now());const j=await r.json();if(!j.ok)throw new Error(j.error);ingest(j);buildFilters();}
+ try{const r=await fetch(API_URL+'?action=getAll&t='+Date.now());const j=await r.json();if(!j.ok)throw new Error(j.error);ingest(j);buildFilters();buildDashboard();}
  catch(e){toast('เชื่อมต่อฐานข้อมูลไม่สำเร็จ: '+e.message,'err');}
  finally{showLoading(false);}
 }
@@ -250,7 +269,7 @@ async function api(action,payload={},opts={}){
   // หลังบันทึกจริง backend จะส่งข้อมูลทั้งหมดกลับมา (ไม่ส่งสำหรับ parseImage)
   if(j.data){
    ingest(j);
-   if(!opts.keepForm)buildFilters();
+   if(!opts.keepForm){buildFilters();buildDashboard();}
   }
   return j;
  }finally{showLoading(false);}
@@ -267,9 +286,90 @@ function adminTab(id,btn){
 function dashTab(id,btn){
  document.querySelectorAll('.dash-panel').forEach(p=>p.classList.toggle('show',p.id===id));
  document.querySelectorAll('#dashTabs .tab').forEach(b=>b.classList.toggle('active',b===btn));
+ if(id==='p-cashin')renderCashPanel('cashIn'); if(id==='p-cashout')renderCashPanel('cashOut'); if(id==='p-crisis')renderCashPanel('crisis'); if(id==='p-cost')renderCostDashboard();
 }
-// ตัวกรองของ Dashboard: ไฟล์นี้ยังไม่มีโค้ดวาดกราฟ/ตาราง จึงเว้นว่างไว้ก่อน
-function onFilter(){}
+
+// Dashboard วิเคราะห์รายเดือน/ไตรมาส/ปีงบประมาณ และเปรียบเทียบปีก่อน
+function monthsForDash(){const q=$('#fQuarter')?.value||'all',mode=$('#fMode')?.value||'ytd',m=+$('#fMonth').value||12;if(q!=='all')return [1,2,3].map(i=>(+q-1)*3+i);if(mode==='mon')return [m];return Array.from({length:m},(_,i)=>i+1);}
+function dashVal(y,c,ms,mode){
+ const stock=['P50','P60','CR','QR','CASH','NWC','NIDEP'];
+ if(stock.includes(c)){const ordered=(mode==='mon'&&$('#fQuarter').value==='all'?[+$('#fMonth').value]:ms).slice().sort((a,b)=>b-a);for(const m of ordered){const z=v(y,m,c);if(z!==undefined&&z!==null)return Number(z)||0;}return 0;}
+ if(mode==='mon'&&$('#fQuarter').value==='all')return Number(v(y,+$('#fMonth').value,c))||0;
+ return ms.reduce((s,m)=>s+(Number(v(y,m,c))||0),0);
+}
+function dashGroup(y,g,ms,mode){return GROUPS[g].items.reduce((s,[c])=>s+dashVal(y,codeOf(g,c),ms,mode),0);}
+function pctChange(a,b){return b?((a-b)/Math.abs(b))*100:null;}
+function drawValueChart(id,type,labels,datasets){
+ const el=document.getElementById(id);if(!el||!window.Chart)return;
+ const old=Chart.getChart(el);if(old)old.destroy();
+ const labelsPlugin={id:'valueLabels',afterDatasetsDraw(ch){const x=ch.ctx;x.save();x.font='bold 11px Sarabun';x.fillStyle='#172033';x.textAlign='center';ch.data.datasets.forEach((d,i)=>ch.getDatasetMeta(i).data.forEach((p,j)=>{const n=d.data[j];if(n!==null&&Number.isFinite(Number(n))){const q=p.tooltipPosition();x.fillText(Number(n).toLocaleString('th-TH',{maximumFractionDigits:2}),q.x,q.y-8);}}));x.restore();}};
+ new Chart(el,{type,data:{labels,datasets},plugins:[labelsPlugin],options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#172033',font:{family:'Sarabun'}}},tooltip:{callbacks:{label:c=>c.dataset.label+': '+Number(c.raw||0).toLocaleString('th-TH',{maximumFractionDigits:2})}}},scales:{x:{ticks:{color:'#172033'}},y:{ticks:{color:'#172033',callback:n=>Number(n).toLocaleString('th-TH')}}}}});
+}
+function buildDashboard(){
+ if(!$('#fYear')?.value)return;
+ const y=+$('#fYear').value,ms=monthsForDash(),mode=$('#fMode').value,compare=$('#fCompare')?.value||'prev',py=y-1;
+ const inc=dashGroup(y,'income',ms,mode),exp=dashGroup(y,'expense',ms,mode),cash=dashVal(y,'P50',ms,mode),debt=dashVal(y,'P60',ms,mode),net=inc-exp;
+ const cards=[['รายได้รวม',inc],['ค่าใช้จ่ายรวม',exp],['รายได้สูง/(ต่ำ)กว่าค่าใช้จ่าย',net],['เงินบำรุงคงเหลือ',cash],['หนี้สินและภาระผูกพัน',debt]];
+ $('#ovKpi').innerHTML=cards.map(([n,vv])=>`<div class="card"><b>${n}</b><div style="font:700 23px Prompt;color:${vv<0?'#b91c1c':'#14532d'};margin-top:8px">${fmt(vv)}</div><small>บาท</small></div>`).join('');
+ const labels=ms.map(m=>MONTHS[m-1]),sumAt=(yy,g,m)=>GROUPS[g].items.reduce((z,[c])=>z+(Number(v(yy,m,c))||0),0);
+ drawValueChart('ovTrend',$('#fChartType')?.value||'line',labels,[{label:'รายได้',data:ms.map(m=>sumAt(y,'income',m)),tension:.25,borderWidth:3},{label:'ค่าใช้จ่าย',data:ms.map(m=>sumAt(y,'expense',m)),tension:.25,borderWidth:3}]);
+ const notes=[`รายได้รวม ${fmt(inc)} บาท ค่าใช้จ่ายรวม ${fmt(exp)} บาท ผลต่าง ${net>=0?'รายได้สูงกว่า':'ค่าใช้จ่ายสูงกว่า'} ${fmt(Math.abs(net))} บาท`];
+ if(compare==='prev'){const oi=dashGroup(py,'income',ms,mode),oe=dashGroup(py,'expense',ms,mode);notes.push(`รายได้เทียบช่วงเดียวกันปีก่อน ${oi?'เปลี่ยนแปลง '+fmt(pctChange(inc,oi))+'%':'ไม่มีฐานข้อมูลปีก่อน'}`);notes.push(`ค่าใช้จ่ายเทียบปีก่อน ${oe?'เปลี่ยนแปลง '+fmt(pctChange(exp,oe))+'%':'ไม่มีฐานข้อมูลปีก่อน'}`);}
+ notes.push(`เงินบำรุงคงเหลือ ${fmt(cash)} บาท และหนี้สิน/ภาระผูกพัน ${fmt(debt)} บาท ควรพิจารณาร่วมกับกำหนดชำระเจ้าหนี้และประมาณการกระแสเงินสด`);
+ notes.push('ข้อเสนอเชิงบริหาร: กำกับค่าสาธารณูปโภค วัสดุใช้สอย ค่าซ่อมบำรุง และค่าจ้างเหมารายเดือน โดยเปรียบเทียบแผนกับผลจริงและระบุหน่วยงานรับผิดชอบ');
+ $('#ovIns').innerHTML=notes.map(n=>`<li>${n}</li>`).join('');
+ const groups=['income','expense','cashIn','cashOut'];
+ $('#ovCompare').innerHTML='<thead><tr><th>หมวดข้อมูล</th><th>ปีปัจจุบัน</th>'+(compare==='prev'?'<th>ปีก่อน</th><th>ผลต่าง</th>':'')+'</tr></thead><tbody>'+groups.map(g=>`<tr><td>${GROUPS[g].title}</td><td class="num">${fmt(dashGroup(y,g,ms,mode))}</td>`+(compare==='prev'?`<td class="num">${fmt(dashGroup(py,g,ms,mode))}</td><td class="num">${fmt(dashGroup(y,g,ms,mode)-dashGroup(py,g,ms,mode))}</td>`:'')+'</tr>').join('')+'</tbody>';
+ let t='<thead><tr><th>หมวด</th><th>รหัส</th><th>รายการ</th><th>ปีปัจจุบัน</th>'+(compare==='prev'?'<th>ปีก่อน</th><th>ผลต่าง</th><th>เปลี่ยนแปลง</th>':'')+'</tr></thead><tbody>';
+ FORM_GROUPS.forEach(g=>GROUPS[g].items.forEach(([c,n])=>{const a=dashVal(y,codeOf(g,c),ms,mode),b=dashVal(py,codeOf(g,c),ms,mode);t+=`<tr><td>${GROUPS[g].title}</td><td>${c}</td><td>${n}</td><td class="num">${fmt(a)}</td>`+(compare==='prev'?`<td class="num">${fmt(b)}</td><td class="num">${fmt(a-b)}</td><td class="num">${b?fmt(pctChange(a,b))+'%':'-'}</td>`:'')+'</tr>';}));
+ $('#pfTable').innerHTML=t+'</tbody>';
+ const credMonth=$('#fQuarter').value==='all'?+$('#fMonth').value:Math.max(...ms);const cm=CRED.filter(r=>r.y===y&&r.m===credMonth);
+ $('#credTable').innerHTML='<thead><tr><th>รายการเจ้าหนี้</th><th>กลุ่ม</th><th>จำนวนเงิน (บาท)</th></tr></thead><tbody>'+(cm.length?cm.map(r=>`<tr><td>${esc(r.n)}</td><td>${esc(r.g)}</td><td class="num">${fmt(r.a)}</td></tr>`).join(''):'<tr><td colspan="3">ไม่มีข้อมูลในช่วงเวลาที่เลือก</td></tr>')+'</tbody><tfoot><tr class="total"><td colspan="2">รวมเจ้าหนี้</td><td class="num">'+fmt(cm.reduce((z,r)=>z+(+r.a||0),0))+'</td></tr></tfoot>';
+ populateDetailItems();renderDetailDashboard();populateAllDashboardSelectors();renderCashPanel('cashIn');renderCashPanel('cashOut');renderCashPanel('crisis');renderCostDashboard();
+}
+function populateDetailItems(){const g=$('#pfGroup')?.value||'income',sel=$('#pfItem');if(!sel)return;const old=sel.value;sel.innerHTML=GROUPS[g].items.map(([c,n])=>`<option value="${c}">${c} – ${n}</option>`).join('');if(GROUPS[g].items.some(x=>x[0]===old))sel.value=old;}
+function renderDetailDashboard(){
+ const sel=$('#pfItem');if(!sel||!sel.value)return;const g=$('#pfGroup').value,c=sel.value,y=+$('#fYear').value,ms=monthsForDash(),mode=$('#fMode').value,compare=$('#fCompare').value,typ=$('#chartType').value;
+ const vals=ms.map(m=>Number(v(y,m,codeOf(g,c)))||0),prev=ms.map(m=>Number(v(y-1,m,codeOf(g,c)))||0);
+ const ds=[{label:'ปีงบ '+y,data:vals,borderWidth:3,tension:.25}];if(compare==='prev')ds.push({label:'ปีงบ '+(y-1),data:prev,borderWidth:3,tension:.25});
+ drawValueChart('detailChart',typ,ms.map(m=>MONTHS[m-1]),ds);
+ const a=mode==='mon'?dashVal(y,codeOf(g,c),ms,mode):vals.reduce((z,n)=>z+n,0),b=mode==='mon'?dashVal(y-1,codeOf(g,c),ms,mode):prev.reduce((z,n)=>z+n,0),d=a-b;
+ const item=GROUPS[g].items.find(x=>x[0]===c);
+ const advice=({P14:'ทบทวนปริมาณการใช้ยาและการบริหารคลังร่วมกับงานเภสัชกรรม',P15:'ตรวจสอบการเบิกจ่ายวัสดุการแพทย์และกำหนดระดับคงคลังที่เหมาะสม',P16:'ติดตามต้นทุนตรวจทางห้องปฏิบัติการและการใช้ชุดตรวจ',P17:'ติดตามสัดส่วนค่าใช้จ่ายบุคลากรและกรอบอัตรากำลัง',P18:'ตรวจสอบการจ้างชั่วคราวให้สอดคล้องภาระงานและกรอบงบประมาณ',P19:'ติดตามค่าตอบแทนเวร/นอกเวลาให้ถูกต้องตามหลักเกณฑ์และภาระบริการ',P21:'ทบทวนค่าใช้สอย การจ้างเหมาบริการ และความจำเป็นของโครงการ',P22:'เปรียบเทียบค่าไฟฟ้า น้ำประปา และมาตรการประหยัดพลังงานรายเดือน',P23:'ควบคุมการเบิกวัสดุสำนักงานและวัสดุทั่วไปตามความจำเป็น',P50:'ติดตามเงินบำรุงคงเหลือและประมาณการกระแสเงินสดล่วงหน้า',P60:'จัดทำแผนชำระหนี้และติดตามภาระผูกพันแยกตามกำหนดครบชำระ'})[c]||(['expense','cashOut'].includes(g)?'ตรวจสอบสาเหตุการเปลี่ยนแปลง ปริมาณการใช้ และความจำเป็นในการจัดซื้อ':'ติดตามความครบถ้วนของการเรียกเก็บ การส่งเบิก และระยะเวลาการได้รับชำระ');
+ $('#detailAnalysis').textContent=item[1]+' ยอด '+fmt(a)+' บาท'+(compare==='prev'?' | เทียบปีก่อน '+(d>=0?'เพิ่มขึ้น ':'ลดลง ')+fmt(Math.abs(d))+' บาท ('+(pctChange(a,b)===null?'ไม่มีฐานเปรียบเทียบ':fmt(pctChange(a,b))+'%')+')':'')+' | ข้อเสนอ: '+advice;
+}
+function populateAllDashboardSelectors(){
+ ['cashIn','cashOut','crisis'].forEach(g=>{const el=$('#'+g+'Item');if(el)el.innerHTML=GROUPS[g].items.map(([c,n])=>`<option value="${c}">${c} – ${n}</option>`).join('');});
+}
+function renderCashPanel(g){
+ const y=+$('#fYear').value,ms=monthsForDash(),compare=$('#fCompare').value,py=y-1;
+ const sel=$('#'+g+'Item'),c=sel?.value||GROUPS[g].items[0][0],typ=$('#'+g+'ChartType')?.value||'bar';if(!sel)return;
+ const vals=ms.map(m=>Number(v(y,m,codeOf(g,c)))||0),prev=ms.map(m=>Number(v(py,m,codeOf(g,c)))||0);
+ const ds=[{label:'ปีงบ '+y,data:vals,borderWidth:3,tension:.25}];if(compare==='prev')ds.push({label:'ปีงบ '+py,data:prev,borderWidth:3,tension:.25});
+ drawValueChart(g+'Chart',typ,ms.map(m=>MONTHS[m-1]),ds);
+ const item=GROUPS[g].items.find(x=>x[0]===c),sum=vals.reduce((a,b)=>a+b,0),old=prev.reduce((a,b)=>a+b,0),diff=sum-old;
+ const unit=g==='crisis'?'':' บาท';
+ $('#'+g+'Analysis').textContent=`${item[1]}: ${fmt(sum)}${unit}`+(compare==='prev'?` | ปีก่อน ${fmt(old)}${unit} | เปลี่ยนแปลง ${diff>=0?'เพิ่มขึ้น ':'ลดลง '}${fmt(Math.abs(diff))}${unit}`:'')+(g==='cashOut'?' | ข้อเสนอ: ตรวจสอบความจำเป็น ปริมาณการใช้ ราคา/หน่วย และการจัดซื้อให้สอดคล้องแผนเงินบำรุง':g==='cashIn'?' | ข้อเสนอ: ติดตามการเรียกเก็บ ส่งเบิก และระยะเวลาการรับชำระแยกตามแหล่งรายได้':' | ควรติดตามแนวโน้มและประเมินร่วมกับเกณฑ์วิกฤตการเงินของกระทรวงสาธารณสุข');
+ const rows=ms.map((m,i)=>`<tr><td>${monthLabel(y,m)}</td><td class="num">${fmt(vals[i])}</td>${compare==='prev'?`<td class="num">${fmt(prev[i])}</td><td class="num">${fmt(vals[i]-prev[i])}</td>`:''}</tr>`).join('');
+ $('#'+g+'Table').innerHTML=`<thead><tr><th>เดือน</th><th>ปีงบ ${y}</th>${compare==='prev'?`<th>ปีงบ ${py}</th><th>ผลต่าง</th>`:''}</tr></thead><tbody>${rows||'<tr><td colspan="4">ไม่มีข้อมูล</td></tr>'}</tbody>`;
+}
+function renderCostDashboard(){
+ const y=+$('#fYear').value,q=$('#fQuarter').value,metric=$('#costMetric')?.value||'op',compare=$('#fCompare').value;
+ const rows=COST.filter(r=>+r.y===y&&(q==='all'||+r.q===+q)).sort((a,b)=>a.q-b.q);
+ const prev=COST.filter(r=>+r.y===y-1&&(q==='all'||+r.q===+q)).sort((a,b)=>a.q-b.q);
+ const keyMean=metric==='op'?'opMean':'ipMean',keyLimit=metric==='op'?'opLimit':'ipLimit',labs=rows.map(r=>'ไตรมาส '+r.q);
+ const sets=[{label:'Mean ปี '+y,data:rows.map(r=>r[keyMean]),borderWidth:3,tension:.25},{label:'Mean + 1SD ปี '+y,data:rows.map(r=>r[keyLimit]),borderWidth:3,tension:.25}];
+ if(compare==='prev'&&prev.length){sets.push({label:'Mean ปีก่อน',data:prev.map(r=>r[keyMean]),borderWidth:2,tension:.25});sets.push({label:'Mean + 1SD ปีก่อน',data:prev.map(r=>r[keyLimit]),borderWidth:2,tension:.25});}
+ drawValueChart('costChart',$('#costChartType')?.value||'bar',labs,sets);
+ $('#costAnalysis').textContent=rows.length?`แสดงข้อมูล ${metric==='op'?'ต้นทุนผู้ป่วยนอก':'ต้นทุนผู้ป่วยใน'} ปีงบประมาณ ${y} ${q==='all'?'ทุกไตรมาส':'ไตรมาส '+q} โดยใช้ค่า Mean + 1SD เป็นค่าอ้างอิงของกลุ่มโรงพยาบาล`:'ยังไม่มีข้อมูลต้นทุนในช่วงที่เลือก กรุณาบันทึกข้อมูลใน Admin';
+ $('#costTable').innerHTML='<thead><tr><th>ไตรมาส</th><th>จำนวน รพ. ทั้งหมด</th><th>รพ. OPD ใช้คำนวณ</th><th>OPD Mean</th><th>OPD 1SD</th><th>OPD Mean+1SD</th><th>รพ. IPD ใช้คำนวณ</th><th>IPD Mean</th><th>IPD 1SD</th><th>IPD Mean+1SD</th></tr></thead><tbody>'+(rows.length?rows.map(r=>`<tr><td>ไตรมาส ${r.q}/${r.y}</td><td class="num">${fmt(r.hospTotal,0)}</td><td class="num">${fmt(r.hospUsed,0)}</td><td class="num">${fmt(r.opMean)}</td><td class="num">${fmt(r.opSd)}</td><td class="num">${fmt(r.opLimit)}</td><td class="num">${fmt(r.ipUsed,0)}</td><td class="num">${fmt(r.ipMean)}</td><td class="num">${fmt(r.ipSd)}</td><td class="num">${fmt(r.ipLimit)}</td></tr>`).join(''):'<tr><td colspan="10">ยังไม่มีข้อมูลค่าเฉลี่ยกลุ่มต้นทุนสำหรับปี/ไตรมาสที่เลือก กรุณาบันทึกในส่วน Admin</td></tr>')+'</tbody>';
+}
+async function saveCostBenchmark(){
+ const y=+$('#costYear').value, payload={year:y,quarter:+$('#costQuarter').value,hospTotal:+$('#costHospTotal').value,hospUsed:+$('#costHospUsed').value,ipUsed:+$('#costIPUsed').value,opMean:+$('#costOPMean').value,opSd:+$('#costOPSD').value,opLimit:+$('#costOPLimit').value,ipMean:+$('#costIPMean').value,ipSd:+$('#costIPSD').value,ipLimit:+$('#costIPLimit').value};
+ try{await api('saveCostBenchmark',payload);if([...$('#fYear').options].some(o=>+o.value===y))$('#fYear').value=String(y);$('#fQuarter').value=String(payload.quarter);onFilter();toast('บันทึกค่าเฉลี่ยกลุ่มต้นทุนรายไตรมาสแล้ว');}catch(e){toast(e.message,'err');}
+}
+function onFilter(){buildDashboard();if(document.querySelector('#p-cashin.show'))renderCashPanel('cashIn');if(document.querySelector('#p-cashout.show'))renderCashPanel('cashOut');if(document.querySelector('#p-crisis.show'))renderCashPanel('crisis');if(document.querySelector('#p-cost.show'))renderCostDashboard();}
+
 
 function checkLogin(){
  const pw=sessionStorage.getItem('pw');
@@ -292,19 +392,20 @@ async function login(){
 function logout(){sessionStorage.removeItem('pw');checkLogin();toast('ออกจากระบบแล้ว');}
 
 function buildFilters(){
- const ys=[...new Set([curFY(),...Object.keys(D).map(Number),...CRED.map(r=>r.y)])].sort((a,b)=>b-a);
- const keepY=$('#aYear').value,keepM=$('#aMonth').value;
+ const ys=[...new Set([curFY(),...Object.keys(D).map(Number),...CRED.map(r=>r.y),...COST.map(r=>+r.y)])].sort((a,b)=>b-a);
+ const keepY=$('#aYear').value,keepM=$('#aMonth').value,keepFY=dashFiltersInitialized?$('#fYear').value:'',keepFM=dashFiltersInitialized?$('#fMonth').value:'';
  $('#fYear').innerHTML=ys.map(y=>`<option value="${y}">ปีงบ ${y}</option>`).join('');
  $('#fMonth').innerHTML=MONTHS.map((x,i)=>`<option value="${i+1}">${monthLabel(ys[0],i+1)}</option>`).join('');
  $('#aYear').innerHTML=ys.map(y=>`<option value="${y}">ปีงบ ${y}</option>`).join('');
  $('#aMonth').innerHTML=MONTHS.map((x,i)=>`<option value="${i+1}">${x}</option>`).join('');
- if(keepY&&ys.includes(+keepY))$('#aYear').value=keepY;
- if(keepM)$('#aMonth').value=keepM;
- fillMonthForm();
+ if(keepY&&ys.includes(+keepY))$('#aYear').value=keepY; if(keepM)$('#aMonth').value=keepM;
+ if(keepFY&&ys.includes(+keepFY))$('#fYear').value=keepFY;
+ const fy=+$('#fYear').value;const avail=(D[fy]?Object.keys(D[fy]).map(Number):[]);if(keepFM&&avail.includes(+keepFM))$('#fMonth').value=keepFM;else $('#fMonth').value=String(avail.length?Math.max(...avail):12);
+ dashFiltersInitialized=true;fillMonthForm();populateAllDashboardSelectors();
 }
 
 /* ---------- AI อ่านรูป ---------- */
-function resizeImage(file,maxSide=1800){
+function resizeImage(file,maxSide=1200){
  return new Promise((resolve,reject)=>{
   const img=new Image(),url=URL.createObjectURL(file);
   img.onload=()=>{
@@ -316,7 +417,7 @@ function resizeImage(file,maxSide=1800){
    ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);
    ctx.drawImage(img,0,0,c.width,c.height);
    URL.revokeObjectURL(url);
-   resolve(c.toDataURL('image/jpeg',0.85).split(',')[1]);
+   resolve(c.toDataURL('image/jpeg',0.68).split(',')[1]);
   };
   img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error('เปิดไฟล์รูปไม่ได้'));};
   img.src=url;
@@ -425,6 +526,10 @@ function fillMonthForm(){
 /* ---------- ทะเบียนเจ้าหนี้ ---------- */
 function credRowHtml(r={}){return `<tr><td><input class="cn" value="${esc(r.n)}"></td><td><input class="cg" list="credGroupsDl" value="${esc(r.g)}"></td><td><input class="ca" style="text-align:right" inputmode="decimal" value="${r.a??''}" oninput="credTotalUI()"></td><td><button class="btn btn-red sm" onclick="this.closest('tr').remove();credTotalUI()">✕</button></td></tr>`;}
 function addCredRow(){$('#credBody').insertAdjacentHTML('beforeend',credRowHtml());}
+function addCredPreset(){
+ const a=['เจ้าหนี้ค่ายา','เจ้าหนี้วัสดุทันตกรรม/เวชภัณฑ์มิใช่ยา','เจ้าหนี้วัสดุวิทยาศาสตร์การแพทย์','เจ้าหนี้วัสดุทั่วไป','เจ้าหนี้ครุภัณฑ์','ครุภัณฑ์ต่ำกว่าเกณฑ์','งบลงทุน UC','เจ้าหนี้ค่าจ้างเหมา','เจ้าหนี้ค่าตรวจห้องปฏิบัติการ','เจ้าหนี้ค่ารักษา OP-UC นอก CUP (ในจังหวัด CT Scan)','ค่าตรวจ MRI','ค่าสาธารณูปโภค','เจ้าหนี้ค่ารักษา OP-UC นอก CUP (ในจังหวัด)','เจ้าหนี้ค่ารักษา OP-UC นอก CUP ต่างจังหวัด','เจ้าหนี้ค่ารักษา OP-UC นอกสังกัด สป.','ค่าใช้จ่ายโครงการ','ค่าตอบแทน ฉบับ 11','ค่าตอบแทนนอกเวลา'];
+ $('#credBody').innerHTML=a.map(n=>credRowHtml({n:n,g:n,a:''})).join('');credTotalUI();
+}
 function credTotalUI(){$('#credTot').textContent=fmt([...document.querySelectorAll('#credBody .ca')].reduce((s,i)=>s+n0(parseNum(i.value)),0));}
 function fillCredForm(rows){const y=+$('#aYear').value,m=+$('#aMonth').value;rows=rows||CRED.filter(r=>r.y===y&&r.m===m);$('#credBody').innerHTML=rows.length?rows.map(credRowHtml).join(''):credRowHtml();credTotalUI();}
 function copyPrevCred(){let y=+$('#aYear').value,m=+$('#aMonth').value-1;if(m<1){m=12;y--;}const r=CRED.filter(x=>x.y===y&&x.m===m);if(!r.length)return toast('ไม่พบข้อมูลเดือนก่อน','err');fillCredForm(r);toast('คัดลอกเจ้าหนี้เดือนก่อนแล้ว');}
@@ -447,6 +552,7 @@ async function saveMonthAndCred(){
  if(!confirm(`ยืนยันบันทึกข้อมูลและเจ้าหนี้ประจำเดือน ${monthLabel(y,m)} ?`))return;
  try{
   await api('saveMonth',{year:y,month:m,values,creditors});
+  if([...$('#fYear').options].some(o=>+o.value===y))$('#fYear').value=String(y);$('#fMonth').value=String(m);$('#fQuarter').value='all';onFilter();
   $('#aCum').checked=false;
   fillMonthForm();
   toast('บันทึกข้อมูลและเจ้าหนี้สำเร็จ ✔');
