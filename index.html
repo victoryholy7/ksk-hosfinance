@@ -143,6 +143,16 @@ table.t{width:100%;border-collapse:collapse;font-size:14px}
   <div class="dash-panel" id="p-cost"><div class="card"><h3>📊 ค่าเฉลี่ยและกลุ่มต้นทุนหน่วยบริการรายไตรมาส</h3><div class="note">เปรียบเทียบค่าเฉลี่ย +1SD ของกลุ่มโรงพยาบาลระดับเดียวกัน โดยแสดงข้อมูลที่บันทึกไว้ในระบบ</div><div class="formbar"><div><label>ตัวชี้วัดต้นทุน</label><select id="costMetric" onchange="renderCostDashboard()"><option value="op">ต้นทุนผู้ป่วยนอก (OPD)</option><option value="ip">ต้นทุนผู้ป่วยใน (IPD)</option></select></div><div><label>รูปแบบกราฟ</label><select id="costChartType" onchange="renderCostDashboard()"><option value="bar">กราฟแท่ง</option><option value="line">กราฟเส้น</option></select></div></div><div class="chart-box"><canvas id="costChart"></canvas></div><div id="costAnalysis" class="status-line"></div><div class="tbl-wrap"><table class="t" id="costTable"></table></div></div></div>
   <div class="dash-panel" id="p-cred">
     <div class="card">
+      <h3>📈 วิเคราะห์เจ้าหนี้ – เลือกรายการหรือยอดรวม</h3>
+      <div class="formbar">
+        <div><label>เลือกรายการ</label><select id="credItem" onchange="renderCredTrend()"></select></div>
+        <div><label>รูปแบบกราฟ</label><select id="credChartType" onchange="renderCredTrend()"><option value="bar">กราฟแท่ง</option><option value="line">กราฟเส้น</option></select></div>
+      </div>
+      <div class="chart-box"><canvas id="credTrendChart"></canvas></div>
+      <div id="credTrendAnalysis" class="status-line"></div>
+      <div class="tbl-wrap"><table class="t" id="credTrendTable"></table></div>
+    </div>
+    <div class="card">
       <h3>🧾 ทะเบียนเจ้าหนี้คงเหลือ ณ สิ้นเดือน</h3>
       <div id="credAnalysis" class="status-line">เลือกปีงบประมาณและเดือนเพื่อดูยอดเจ้าหนี้</div>
       <h4 style="color:var(--g2);margin:12px 0 8px">📊 กราฟยอดเจ้าหนี้คงเหลือแยกตามรายการ</h4>
@@ -395,8 +405,56 @@ function renderCredDashboard(){
  $('#credChart').parentElement.style.height=Math.max(320,chartRows.length*30+90)+'px';
  drawValueChart('credChart','bar',chartRows.map(r=>r.n),[{label:'ยอดเจ้าหนี้คงเหลือ (บาท)',data:chartRows.map(r=>r.a),borderWidth:1,backgroundColor:'#1f7a4d',borderColor:'#14532d',borderRadius:4}],
   {indexAxis:'y',tooltipTitle:i=>chartRows[i].n,tooltipAfter:i=>'กลุ่ม: '+chartRows[i].g});
+ populateCredItems(y,cm);renderCredTrend();
  $('#credAnalysis').textContent=`ข้อมูล ณ ${monthLabel(y,credMonth)} | จำนวน ${cm.length.toLocaleString('th-TH')} รายการ | รวมเจ้าหนี้ ${fmt(total)} บาท`+(cm.length?' | กราฟแสดงยอดเจ้าหนี้แต่ละรายการ เรียงจากมากไปน้อย':' | ยังไม่มีข้อมูลเจ้าหนี้ของเดือนที่เลือก');
  $('#credTable').innerHTML='<thead><tr><th>รายการเจ้าหนี้</th><th>กลุ่ม</th><th>จำนวนเงิน (บาท)</th></tr></thead><tbody>'+(cm.length?cm.map(r=>`<tr><td>${esc(r.n)}</td><td>${esc(r.g)}</td><td class="num">${fmt(r.a)}</td></tr>`).join(''):'<tr><td colspan="3">ไม่มีข้อมูลในเดือนที่เลือก</td></tr>')+'</tbody><tfoot><tr class="total"><td colspan="2">รวมเจ้าหนี้</td><td class="num">'+fmt(total)+'</td></tr></tfoot>';
+}
+// เจ้าหนี้: เลือกรายการ/ยอดรวม ดูยอดคงเหลือรายเดือน เทียบปีก่อน พร้อมวิเคราะห์
+function credMonthHas(yy,m){return CRED.some(r=>+r.y===yy&&+r.m===m);}
+function credVal(yy,m,name){
+ if(!credMonthHas(yy,m))return null;
+ return CRED.reduce((s,r)=>(+r.y===yy&&+r.m===m&&(name==='__TOTAL__'||String(r.n||'').trim()===name))?s+(Number(r.a)||0):s,0);
+}
+function populateCredItems(y,cm){
+ const el=$('#credItem');if(!el)return;
+ const old=el.value,amt={};
+ cm.forEach(r=>{const n=String(r.n||'').trim();amt[n]=(amt[n]||0)+(Number(r.a)||0);});
+ const names=[...new Set(CRED.filter(r=>+r.y===y||+r.y===y-1).map(r=>String(r.n||'').trim()).filter(Boolean))]
+  .sort((a,b)=>(amt[b]||0)-(amt[a]||0)||a.localeCompare(b,'th'));
+ el.innerHTML='<option value="__TOTAL__">ยอดรวมทั้งหมด</option>'+names.map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('');
+ if([...el.options].some(o=>o.value===old))el.value=old;
+}
+function renderCredTrend(){
+ if(!$('#credItem'))return;
+ const y=+$('#fYear').value,py=y-1,ms=monthsForDash(),compare=$('#fCompare').value;
+ const name=$('#credItem').value||'__TOTAL__',typ=$('#credChartType')?.value||'bar';
+ const isTotal=name==='__TOTAL__',label=isTotal?'ยอดรวมเจ้าหนี้ทั้งหมด':name;
+ const vals=ms.map(m=>credVal(y,m,name)),prev=ms.map(m=>credVal(py,m,name));
+ const ds=[{label:'ปีงบ '+y,data:vals,borderWidth:3,tension:.25}];
+ if(compare==='prev')ds.push({label:'ปีงบ '+py,data:prev,borderWidth:3,tension:.25});
+ drawValueChart('credTrendChart',typ,ms.map(m=>MONTHS[m-1]),ds);
+
+ let li=-1;vals.forEach((x,i)=>{if(x!=null)li=i;});
+ let t;
+ if(li<0){t=`ยังไม่มีข้อมูลเจ้าหนี้ของ "${label}" ในช่วงที่เลือก`;}
+ else{
+  const m=ms[li],cur=vals[li];
+  t=`${label}: ณ ${monthLabel(y,m)} คงเหลือ ${fmt(cur)} บาท`;
+  const pm=m>1?credVal(y,m-1,name):null;
+  if(pm!=null){const d=cur-pm;t+=` | เทียบเดือนก่อน ${d>=0?'เพิ่มขึ้น ':'ลดลง '}${fmt(Math.abs(d))} บาท`;}
+  if(compare==='prev'){
+   const p=prev[li];
+   if(p!=null){const d=cur-p,pc=pctChange(cur,p);t+=` | เดือนเดียวกันปีก่อน ${fmt(p)} บาท (${d>=0?'เพิ่มขึ้น ':'ลดลง '}${fmt(Math.abs(d))} บาท${pc!=null?' '+fmt(pc)+'%':''})`;}
+   else t+=' | ไม่มีข้อมูลเดือนเดียวกันของปีก่อน';
+  }
+  const nn=vals.map((x,i)=>({x,i})).filter(o=>o.x!=null);
+  if(nn.length>1){const mx=nn.reduce((a,b)=>b.x>a.x?b:a);t+=` | สูงสุดเดือน ${MONTHS[ms[mx.i]-1]} ${fmt(mx.x)} บาท`;}
+  t+=' | ข้อเสนอ: '+(isTotal?'ติดตามกำหนดครบชำระและวางแผนกระแสเงินสดเทียบกับเงินบำรุงคงเหลือ':'ตรวจสอบกำหนดชำระและเจรจาเงื่อนไขกับเจ้าหนี้รายนี้');
+ }
+ $('#credTrendAnalysis').textContent=t;
+ const rows=ms.map((m,i)=>{const a=vals[i],b=prev[i],d=(a!=null&&b!=null)?a-b:null;
+  return `<tr><td>${monthLabel(y,m)}</td><td class="num">${a==null?'-':fmt(a)}</td>${compare==='prev'?`<td class="num">${b==null?'-':fmt(b)}</td><td class="num">${d==null?'-':fmt(d)}</td>`:''}</tr>`;}).join('');
+ $('#credTrendTable').innerHTML=`<thead><tr><th>เดือน</th><th>ปีงบ ${y}</th>${compare==='prev'?`<th>ปีงบ ${py}</th><th>ผลต่าง</th>`:''}</tr></thead><tbody>${rows||'<tr><td colspan="4">ไม่มีข้อมูล</td></tr>'}</tbody>`;
 }
 function renderCostDashboard(){
  const y=+$('#fYear').value,q=$('#fQuarter').value,metric=$('#costMetric')?.value||'op',compare=$('#fCompare').value;
