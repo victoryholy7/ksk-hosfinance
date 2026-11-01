@@ -226,6 +226,16 @@ table.t{width:100%;border-collapse:collapse;font-size:14px}
     </div>
 
     <div class="admin-panel" id="a-set">
+      <div class="card" style="border:2px dashed #0ea5e9">
+        <h3>📥 นำเข้าข้อมูลเงินบำรุงหลายเดือน</h3>
+        <p class="note">นำเข้ารายรับ–รายจ่ายเงินบำรุงรายเดือนที่ถอดจากภาพตาราง (ต.ค.68 – ส.ค.69, 11 เดือน) ลงฐานข้อมูลในครั้งเดียว ระบบจะเขียนทับเฉพาะรหัสเงินบำรุง (CI_ รายรับ / CO_ รายจ่าย) ของเดือนเหล่านั้น ข้อมูล Planfin เจ้าหนี้ และรหัสอื่นของเดือนเดียวกันจะไม่ถูกแตะ</p>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:10px">
+          <button class="btn btn-green" onclick="importPreset('cash2569')">📥 นำเข้าเงินบำรุง ต.ค.68 – ส.ค.69</button>
+          <input type="file" id="importFile" accept=".json,application/json" style="display:none" onchange="importFile(this)">
+          <button class="btn btn-gold" onclick="$('#importFile').click()">📂 นำเข้าจากไฟล์ JSON</button>
+        </div>
+        <div class="status-line" id="importStatus" style="margin-top:12px">พร้อมนำเข้า</div>
+      </div>
       <div class="grid g2">
         <div class="card">
           <h3>🔑 เปลี่ยนรหัสผ่าน</h3>
@@ -474,6 +484,53 @@ async function saveCostBenchmark(){
 function onFilter(changed){if(changed==='y')refreshDashMonthOptions();buildDashboard();if(document.querySelector('#p-cashin.show'))renderCashPanel('cashIn');if(document.querySelector('#p-cashout.show'))renderCashPanel('cashOut');if(document.querySelector('#p-crisis.show'))renderCashPanel('crisis');if(document.querySelector('#p-cost.show'))renderCostDashboard();}
 function refreshDashMonthOptions(preferred){const fy=+$('#fYear').value;if(!fy)return;const old=preferred??$('#fMonth').value;$('#fMonth').innerHTML=MONTHS.map((x,i)=>`<option value="${i+1}">${monthLabel(fy,i+1)}</option>`).join('');if(old&&[...$('#fMonth').options].some(o=>o.value===String(old)))$('#fMonth').value=String(old);}
 
+
+/* ---------- นำเข้าข้อมูลหลายเดือน ---------- */
+const IMPORT_PRESETS={cash2569:{label:'เงินบำรุง รายรับ–รายจ่าย ต.ค.68 – ส.ค.69',year:2569,months:{"1":{"CI_P04":4021479.63,"CI_P061":2550.5,"CI_P07":568319.86,"CI_P08":20650.0,"CI_P09":116450.0,"CI_P10":524765.0,"CI_P12":40422.0,"CI_P99":504182.4,"CO_P14":386819.05,"CO_P15":77495.2,"CO_P151":29566.0,"CO_P16":45000.0,"CO_P18":709110.38,"CO_P19":1058420.5,"CO_P20":37068.0,"CO_P21":456037.3,"CO_P22":170620.51,"CO_P23":201490.0,"CO_P25":363799.0,"CO_P26":76630.0,"CO_P99":270452.24},"2":{"CI_P04":4268363.37,"CI_P05":6100.0,"CI_P061":159832.84,"CI_P07":408279.22,"CI_P08":46469.0,"CI_P09":181377.54,"CI_P10":510172.0,"CI_P12":49119.0,"CI_P99":224966.17,"CO_P14":690705.44,"CO_P15":210703.0,"CO_P151":20500.0,"CO_P18":684428.53,"CO_P19":1028690.0,"CO_P20":34811.0,"CO_P21":449221.26,"CO_P22":171240.28,"CO_P23":149177.26,"CO_P26":12340.0,"CO_P99":497396.39},"3":{"CI_P04":1561133.66,"CI_P07":336779.04,"CI_P08":2733.0,"CI_P09":21000.0,"CI_P10":584526.61,"CI_P12":96476.13,"CI_P99":217866.62,"CO_P14":1230604.93,"CO_P15":139548.2,"CO_P18":675780.32,"CO_P19":684037.5,"CO_P20":36000.0,"CO_P21":348830.64,"CO_P22":162421.45,"CO_P23":57477.3,"CO_P99":230018.5},"4":{"CI_P04":433804.22,"CI_P05":26400.0,"CI_P07":257283.29,"CI_P08":15961.0,"CI_P09":44500.0,"CI_P10":481543.5,"CI_P12":302611.91,"CI_P99":302686.67,"CO_P14":650328.24,"CO_P15":122232.4,"CO_P151":8660.0,"CO_P16":81750.0,"CO_P18":671517.82,"CO_P19":1145903.0,"CO_P20":117297.0,"CO_P21":658498.54,"CO_P22":135054.17,"CO_P23":158572.8,"CO_P99":264530.14},"5":{"CI_P04":4383467.84,"CI_P05":8700.0,"CI_P07":405994.07,"CI_P08":4420.0,"CI_P09":44500.0,"CI_P10":475604.4,"CI_P12":26664.16,"CI_P99":296230.64,"CO_P14":62864.0,"CO_P15":63095.0,"CO_P16":155695.0,"CO_P18":693521.76,"CO_P19":748626.25,"CO_P20":39436.0,"CO_P21":411418.96,"CO_P22":124564.85,"CO_P23":184003.0,"CO_P99":337986.25},"6":{"CI_P04":8556389.31,"CI_P05":12800.0,"CI_P07":443571.14,"CI_P08":4000.0,"CI_P09":128363.9,"CI_P10":412635.5,"CI_P12":239880.55,"CI_P99":241469.19,"CO_P14":1537795.99,"CO_P15":418677.35,"CO_P151":26560.8,"CO_P16":81213.0,"CO_P18":674033.66,"CO_P19":597716.25,"CO_P20":121240.0,"CO_P21":290582.54,"CO_P22":152252.65,"CO_P23":57968.0,"CO_P26":177590.0,"CO_P99":247821.63},"7":{"CI_P04":622558.95,"CI_P05":10000.0,"CI_P06":4454.0,"CI_P07":187304.98,"CI_P08":2930.0,"CI_P09":10500.0,"CI_P10":457881.0,"CI_P12":98457.55,"CI_P99":251272.37,"CO_P14":637083.48,"CO_P15":132948.65,"CO_P151":33951.1,"CO_P16":389241.0,"CO_P18":680964.81,"CO_P19":674748.75,"CO_P20":44600.0,"CO_P21":1022586.31,"CO_P22":148698.88,"CO_P23":88895.65,"CO_P26":366050.0,"CO_P99":300315.72},"8":{"CI_P04":944812.76,"CI_P05":5250.0,"CI_P061":19762.73,"CI_P07":574582.45,"CI_P08":4320.0,"CI_P09":8000.0,"CI_P10":569071.25,"CI_P12":146919.0,"CI_P99":200383.39,"CO_P14":200560.82,"CO_P15":109179.4,"CO_P151":72850.0,"CO_P18":704892.5,"CO_P19":1602126.25,"CO_P20":108904.0,"CO_P21":754489.75,"CO_P22":147223.76,"CO_P23":194114.96,"CO_P99":183475.86},"9":{"CI_P04":690706.43,"CI_P05":9600.0,"CI_P06":14857.0,"CI_P061":71573.52,"CI_P07":241748.73,"CI_P08":3925.0,"CI_P09":336660.33,"CI_P10":641258.13,"CI_P12":2252397.99,"CI_P99":279719.29,"CO_P14":910949.94,"CO_P15":324156.18,"CO_P151":48771.8,"CO_P16":84750.0,"CO_P18":703345.0,"CO_P19":721142.5,"CO_P20":104083.0,"CO_P21":1382787.7,"CO_P22":175538.85,"CO_P23":39910.0,"CO_P26":96040.0,"CO_P99":234295.38},"10":{"CI_P04":699275.34,"CI_P06":3575.0,"CI_P061":147075.71,"CI_P07":419683.01,"CI_P08":993573.48,"CI_P09":225400.0,"CI_P10":608835.02,"CI_P12":582756.02,"CI_P13":3107112.98,"CI_P99":256959.29,"CO_P14":686074.4,"CO_P15":400539.44,"CO_P151":3000.0,"CO_P18":709457.5,"CO_P19":1109363.25,"CO_P20":51109.0,"CO_P21":669549.3,"CO_P22":203484.19,"CO_P23":192502.21,"CO_P26":285418.0,"CO_P99":298181.3},"11":{"CI_P04":763920.83,"CI_P06":2125.0,"CI_P07":592998.33,"CI_P08":37250.0,"CI_P09":31000.0,"CI_P10":499403.0,"CI_P12":151974.1,"CI_P99":287076.66,"CO_P14":1218388.17,"CO_P15":215087.65,"CO_P151":18160.0,"CO_P18":703990.0,"CO_P19":1581771.25,"CO_P20":39621.0,"CO_P21":1130800.35,"CO_P22":173558.68,"CO_P23":111015.0,"CO_P25":197991.6,"CO_P99":245592.87}}}};
+async function importMonths(year,months,label){
+ const ms=Object.keys(months).map(Number).sort((a,b)=>a-b);
+ if(!ms.length)return toast('ไม่พบข้อมูลที่จะนำเข้า','err');
+ let inc=0,out=0,cnt=0;
+ ms.forEach(m=>Object.entries(months[m]).forEach(([k,x])=>{cnt++;if(k.startsWith('CI_'))inc+=x;else if(k.startsWith('CO_'))out+=x;}));
+ const msg=`นำเข้า: ${label}\nปีงบ ${year} จำนวน ${ms.length} เดือน (${monthLabel(year,ms[0])} – ${monthLabel(year,ms[ms.length-1])}) รวม ${cnt} รายการ\nรวมรับ ${fmt(inc)} บาท | รวมจ่าย ${fmt(out)} บาท\n\nรหัสที่ซ้ำกับข้อมูลเดิมจะถูกเขียนทับ รหัสอื่นของเดือนเดียวกันจะไม่ถูกแตะ ดำเนินการต่อหรือไม่?`;
+ if(!confirm(msg))return;
+ const box=$('#importStatus');
+ try{
+  for(let i=0;i<ms.length;i++){
+   const m=ms[i];
+   box.textContent=`กำลังนำเข้า ${monthLabel(year,m)} (${i+1}/${ms.length}) ...`;
+   // backend แทนที่ข้อมูลทั้งเดือน จึงรวมค่าเดิมของเดือนนั้นไปด้วยเพื่อไม่ให้รหัสอื่นหาย
+   const merged=Object.assign({},D[year]?.[m]||{},months[m]);
+   await api('saveMonth',{year,month:m,values:merged},{keepForm:i<ms.length-1});
+  }
+  box.textContent=`นำเข้าสำเร็จ ${ms.length} เดือน ✔ (ดูผลได้ที่ Dashboard แท็บรายรับ–เงินบำรุง / รายจ่าย–เงินบำรุง)`;
+  toast(`นำเข้าข้อมูล ${ms.length} เดือนสำเร็จ ✔`);
+ }catch(e){
+  box.textContent='นำเข้าไม่สำเร็จ: '+e.message+' (เดือนที่นำเข้าไปแล้วยังคงอยู่ กดนำเข้าซ้ำได้ ข้อมูลไม่ซ้ำซ้อน)';
+  toast('นำเข้าไม่สำเร็จ: '+e.message,'err');
+ }
+}
+function importPreset(id){const p=IMPORT_PRESETS[id];if(p)importMonths(p.year,p.months,p.label);}
+function importFile(input){
+ const f=input.files[0];if(!f)return;
+ const r=new FileReader();
+ r.onload=()=>{
+  try{
+   const j=JSON.parse(r.result),y=+j.year;
+   const known=new Set();FORM_GROUPS.forEach(g=>GROUPS[g].items.forEach(([c])=>known.add(codeOf(g,c))));
+   const months={};
+   Object.entries(j.months||{}).forEach(([m,vals])=>{
+    const mm=+m;if(!(mm>=1&&mm<=12))return;
+    const o={};Object.entries(vals||{}).forEach(([k,x])=>{const n=parseNum(x);if(n!=null&&known.has(k))o[k]=n;});
+    if(Object.keys(o).length)months[mm]=o;
+   });
+   if(!y||!Object.keys(months).length)throw new Error('รูปแบบไฟล์ไม่ถูกต้อง ต้องมี year และ months (เดือน 1-12) พร้อมรหัสที่ระบบรู้จัก');
+   importMonths(y,months,'ไฟล์ '+f.name);
+  }catch(e){toast('อ่านไฟล์ไม่สำเร็จ: '+e.message,'err');}
+  input.value='';
+ };
+ r.readAsText(f);
+}
 
 function checkLogin(){
  const pw=sessionStorage.getItem('pw');
