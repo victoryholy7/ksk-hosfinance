@@ -145,7 +145,7 @@ table.t{width:100%;border-collapse:collapse;font-size:14px}
     <div class="card">
       <h3>🧾 ทะเบียนเจ้าหนี้คงเหลือ ณ สิ้นเดือน</h3>
       <div id="credAnalysis" class="status-line">เลือกปีงบประมาณและเดือนเพื่อดูยอดเจ้าหนี้</div>
-      <h4 style="color:var(--g2);margin:12px 0 8px">📊 กราฟสรุปยอดเจ้าหนี้แยกตามกลุ่ม</h4>
+      <h4 style="color:var(--g2);margin:12px 0 8px">📊 กราฟยอดเจ้าหนี้คงเหลือแยกตามรายการ</h4>
       <div class="chart-box"><canvas id="credChart"></canvas></div>
       <h4 style="color:var(--g2);margin:16px 0 8px">📑 รายละเอียดทะเบียนเจ้าหนี้</h4>
       <div class="tbl-wrap"><table class="t" id="credTable"></table></div>
@@ -308,11 +308,19 @@ function dashVal(y,c,ms,mode){
 }
 function dashGroup(y,g,ms,mode){return GROUPS[g].items.reduce((s,[c])=>s+dashVal(y,codeOf(g,c),ms,mode),0);}
 function pctChange(a,b){return b?((a-b)/Math.abs(b))*100:null;}
-function drawValueChart(id,type,labels,datasets){
+function drawValueChart(id,type,labels,datasets,extra){
  const el=document.getElementById(id);if(!el||!window.Chart)return;
  const old=Chart.getChart(el);if(old)old.destroy();
- const labelsPlugin={id:'valueLabels',afterDatasetsDraw(ch){const x=ch.ctx;x.save();x.font='bold 11px Sarabun';x.fillStyle='#172033';x.textAlign='center';ch.data.datasets.forEach((d,i)=>ch.getDatasetMeta(i).data.forEach((p,j)=>{const n=d.data[j];if(n!==null&&Number.isFinite(Number(n))){const q=p.tooltipPosition();x.fillText(Number(n).toLocaleString('th-TH',{maximumFractionDigits:2}),q.x,q.y-8);}}));x.restore();}};
- new Chart(el,{type,data:{labels,datasets},plugins:[labelsPlugin],options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#172033',font:{family:'Sarabun'}}},tooltip:{callbacks:{label:c=>c.dataset.label+': '+Number(c.raw||0).toLocaleString('th-TH',{maximumFractionDigits:2})}}},scales:{x:{ticks:{color:'#172033'}},y:{ticks:{color:'#172033',callback:n=>Number(n).toLocaleString('th-TH')}}}}});
+ extra=extra||{};const horiz=extra.indexAxis==='y';
+ const labelsPlugin={id:'valueLabels',afterDatasetsDraw(ch){const x=ch.ctx;x.save();x.font='bold 11px Sarabun';x.fillStyle='#172033';x.textAlign=horiz?'left':'center';ch.data.datasets.forEach((d,i)=>ch.getDatasetMeta(i).data.forEach((p,j)=>{const n=d.data[j];if(n!==null&&Number.isFinite(Number(n))){const q=p.tooltipPosition(),t=Number(n).toLocaleString('th-TH',{maximumFractionDigits:2});if(horiz)x.fillText(t,q.x+6,q.y+4);else x.fillText(t,q.x,q.y-8);}}));x.restore();}};
+ const numTick={color:'#172033',callback:n=>Number(n).toLocaleString('th-TH')};
+ const scales=horiz
+  ?{x:{ticks:numTick,grace:'18%'},y:{ticks:{color:'#172033',autoSkip:false,callback:function(val){const s=String(this.getLabelForValue(val));return s.length>42?s.slice(0,41)+'…':s;}}}}
+  :{x:{ticks:{color:'#172033'}},y:{ticks:numTick}};
+ const tip={callbacks:{label:c=>c.dataset.label+': '+Number(c.raw||0).toLocaleString('th-TH',{maximumFractionDigits:2})}};
+ if(extra.tooltipTitle)tip.callbacks.title=its=>extra.tooltipTitle(its[0].dataIndex);
+ if(extra.tooltipAfter)tip.callbacks.afterLabel=c=>extra.tooltipAfter(c.dataIndex);
+ new Chart(el,{type,data:{labels,datasets},plugins:[labelsPlugin],options:{responsive:true,maintainAspectRatio:false,indexAxis:horiz?'y':'x',plugins:{legend:{display:!horiz,labels:{color:'#172033',font:{family:'Sarabun'}}},tooltip:tip},scales}});
 }
 function buildDashboard(){
  if(!$('#fYear')?.value)return;
@@ -373,17 +381,21 @@ function renderCashPanel(g){
  $('#'+g+'Table').innerHTML=`<thead><tr><th>เดือน</th><th>ปีงบ ${y}</th>${compare==='prev'?`<th>ปีงบ ${py}</th><th>ผลต่าง</th>`:''}</tr></thead><tbody>${rows||'<tr><td colspan="4">ไม่มีข้อมูล</td></tr>'}</tbody>`;
 }
 
-// สรุปทะเบียนเจ้าหนี้ ณ สิ้นเดือน: กราฟแยกตามกลุ่มและตารางรายละเอียด
+// สรุปทะเบียนเจ้าหนี้ ณ สิ้นเดือน: กราฟแยกตามรายการเจ้าหนี้ และตารางรายละเอียด
 function renderCredDashboard(){
  const y=+$('#fYear').value,ms=monthsForDash();
  const credMonth=$('#fQuarter').value==='all'?+$('#fMonth').value:Math.max(...ms);
  const cm=CRED.filter(r=>+r.y===y&&+r.m===credMonth);
  const total=cm.reduce((sum,r)=>sum+(Number(r.a)||0),0);
- const grouped={};
- cm.forEach(r=>{const group=String(r.g||'ไม่ระบุกลุ่ม').trim()||'ไม่ระบุกลุ่ม';grouped[group]=(grouped[group]||0)+(Number(r.a)||0);});
- const chartRows=Object.entries(grouped).sort((a,b)=>b[1]-a[1]);
- drawValueChart('credChart','bar',chartRows.map(x=>x[0]),[{label:'ยอดเจ้าหนี้คงเหลือ (บาท)',data:chartRows.map(x=>x[1]),borderWidth:1}]);
- $('#credAnalysis').textContent=`ข้อมูล ณ ${monthLabel(y,credMonth)} | จำนวน ${cm.length.toLocaleString('th-TH')} รายการ | รวมเจ้าหนี้ ${fmt(total)} บาท`+(cm.length?' | กราฟแสดงยอดรวมแยกตามกลุ่มเจ้าหนี้':' | ยังไม่มีข้อมูลเจ้าหนี้ของเดือนที่เลือก');
+ // รวมยอดตามชื่อรายการ (กันกรณีชื่อซ้ำ) เก็บกลุ่มไว้โชว์ใน tooltip
+ const byItem={};
+ cm.forEach(r=>{const name=String(r.n||'').trim()||'ไม่ระบุรายการ';const o=byItem[name]||(byItem[name]={a:0,g:String(r.g||'').trim()||'ไม่ระบุกลุ่ม'});o.a+=Number(r.a)||0;});
+ const chartRows=Object.entries(byItem).map(([n,o])=>({n,a:o.a,g:o.g})).sort((a,b)=>b.a-a.a);
+ // กราฟแนวนอน: ความสูงปรับตามจำนวนรายการ เพื่อให้ชื่ออ่านออกทุกบรรทัด
+ $('#credChart').parentElement.style.height=Math.max(320,chartRows.length*30+90)+'px';
+ drawValueChart('credChart','bar',chartRows.map(r=>r.n),[{label:'ยอดเจ้าหนี้คงเหลือ (บาท)',data:chartRows.map(r=>r.a),borderWidth:1,backgroundColor:'#1f7a4d',borderColor:'#14532d',borderRadius:4}],
+  {indexAxis:'y',tooltipTitle:i=>chartRows[i].n,tooltipAfter:i=>'กลุ่ม: '+chartRows[i].g});
+ $('#credAnalysis').textContent=`ข้อมูล ณ ${monthLabel(y,credMonth)} | จำนวน ${cm.length.toLocaleString('th-TH')} รายการ | รวมเจ้าหนี้ ${fmt(total)} บาท`+(cm.length?' | กราฟแสดงยอดเจ้าหนี้แต่ละรายการ เรียงจากมากไปน้อย':' | ยังไม่มีข้อมูลเจ้าหนี้ของเดือนที่เลือก');
  $('#credTable').innerHTML='<thead><tr><th>รายการเจ้าหนี้</th><th>กลุ่ม</th><th>จำนวนเงิน (บาท)</th></tr></thead><tbody>'+(cm.length?cm.map(r=>`<tr><td>${esc(r.n)}</td><td>${esc(r.g)}</td><td class="num">${fmt(r.a)}</td></tr>`).join(''):'<tr><td colspan="3">ไม่มีข้อมูลในเดือนที่เลือก</td></tr>')+'</tbody><tfoot><tr class="total"><td colspan="2">รวมเจ้าหนี้</td><td class="num">'+fmt(total)+'</td></tr></tfoot>';
 }
 function renderCostDashboard(){
