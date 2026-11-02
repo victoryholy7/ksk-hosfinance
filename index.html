@@ -170,7 +170,6 @@ table.t{width:100%;border-collapse:collapse;font-size:14px}
     <button class="tab" onclick="dashTab('p-cred',this)">🧾 ทะเบียนเจ้าหนี้</button>
   </div>
   
-  <!-- แท็บภาพรวม -->
   <div class="dash-panel show" id="p-ov">
     <div class="card" id="mcCard">
       <h3>📋 สรุปฐานะเงินบำรุง เทียบเดือนก่อน <span id="mcSub" style="font-size:14px;color:#64748b;font-weight:400"></span></h3>
@@ -186,50 +185,14 @@ table.t{width:100%;border-collapse:collapse;font-size:14px}
     <div class="card"><h3>📈 เปรียบเทียบรายหมวด</h3><div class="tbl-wrap"><table class="t" id="ovCompare"></table></div></div>
   </div>
 
-  <!-- แท็บ Planfin -->
-  <div class="dash-panel" id="p-pf">
-    <div class="card"><div class="tbl-wrap"><table class="t" id="pfTable"></table></div></div>
-  </div>
-
-  <!-- แท็บรายรับเงินบำรุง -->
-  <div class="dash-panel" id="p-cashin">
-    <div class="grid g2">
-      <div class="card"><h3>📊 กราฟรายรับเงินบำรุง</h3><div class="chart-box"><canvas id="cashInChart"></canvas></div></div>
-      <div class="card"><h3>📋 รายละเอียดรายรับ</h3><div class="tbl-wrap"><table class="t" id="cashInTable"></table></div></div>
-    </div>
-  </div>
-
-  <!-- แท็บรายจ่ายเงินบำรุง -->
-  <div class="dash-panel" id="p-cashout">
-    <div class="grid g2">
-      <div class="card"><h3>📊 กราฟรายจ่ายเงินบำรุง</h3><div class="chart-box"><canvas id="cashOutChart"></canvas></div></div>
-      <div class="card"><h3>📋 รายละเอียดรายจ่าย</h3><div class="tbl-wrap"><table class="t" id="cashOutTable"></table></div></div>
-    </div>
-  </div>
-
-  <!-- แท็บวิกฤติ 7 ระดับ -->
-  <div class="dash-panel" id="p-crisis">
-    <div class="grid g2">
-      <div class="card"><h3>📊 กราฟอัตราส่วนวิกฤติการเงิน</h3><div class="chart-box"><canvas id="crisisChart"></canvas></div></div>
-      <div class="card"><h3>📋 ตารางประเมินวิกฤติ 7 ระดับ</h3><div class="tbl-wrap"><table class="t" id="crisisTable"></table></div></div>
-    </div>
-  </div>
-
-  <!-- แท็บต้นทุนหน่วยบริการ -->
-  <div class="dash-panel" id="p-cost">
-    <div class="grid g2">
-      <div class="card"><h3>📊 กราฟเปรียบเทียบต้นทุนต่อหน่วย</h3><div class="chart-box"><canvas id="costChart"></canvas></div></div>
-      <div class="card"><h3>📋 ตารางเกณฑ์เปรียบเทียบต้นทุน</h3><div class="tbl-wrap"><table class="t" id="costTable"></table></div></div>
-    </div>
-  </div>
-
-  <!-- แท็บเจ้าหนี้ -->
-  <div class="dash-panel" id="p-cred">
-    <div class="card"><div class="tbl-wrap"><table class="t" id="credTable"></table></div></div>
-  </div>
+  <div class="dash-panel" id="p-pf"><div class="card"><div class="tbl-wrap"><table class="t" id="pfTable"></table></div></div></div>
+  <div class="dash-panel" id="p-cashin"><div class="grid g2"><div class="card"><h3>📊 กราฟรายรับเงินบำรุง</h3><div class="chart-box"><canvas id="cashInChart"></canvas></div></div><div class="card"><h3>📋 รายละเอียดรายรับ</h3><div class="tbl-wrap"><table class="t" id="cashInTable"></table></div></div></div></div>
+  <div class="dash-panel" id="p-cashout"><div class="grid g2"><div class="card"><h3>📊 กราฟรายจ่ายเงินบำรุง</h3><div class="chart-box"><canvas id="cashOutChart"></canvas></div></div><div class="card"><h3>📋 รายละเอียดรายจ่าย</h3><div class="tbl-wrap"><table class="t" id="cashOutTable"></table></div></div></div></div>
+  <div class="dash-panel" id="p-crisis"><div class="grid g2"><div class="card"><h3>📊 กราฟอัตราส่วนวิกฤติการเงิน</h3><div class="chart-box"><canvas id="crisisChart"></canvas></div></div><div class="card"><h3>📋 ตารางประเมินวิกฤติ 7 ระดับ</h3><div class="tbl-wrap"><table class="t" id="crisisTable"></table></div></div></div></div>
+  <div class="dash-panel" id="p-cost"><div class="grid g2"><div class="card"><h3>📊 กราฟเปรียบเทียบต้นทุนต่อหน่วย</h3><div class="chart-box"><canvas id="costChart"></canvas></div></div><div class="card"><h3>📋 ตารางเกณฑ์เปรียบเทียบต้นทุน</h3><div class="tbl-wrap"><table class="t" id="costTable"></table></div></div></div></div>
+  <div class="dash-panel" id="p-cred"><div class="card"><div class="tbl-wrap"><table class="t" id="credTable"></table></div></div></div>
 </section>
 
-<!-- หน้า Admin -->
 <section id="v-admin" class="view">
   <div id="loginBox" class="card login">
     <div style="font-size:36px;margin-bottom:10px">🔐</div>
@@ -306,7 +269,7 @@ table.t{width:100%;border-collapse:collapse;font-size:14px}
 <div id="toast"></div>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbxfzup8_kKBGjz51RhWQc-sYtrn38JiFI9vcZ2NtI41CTcAetgLFe0ngOttIcA1WpfO/exec'; // <-- ใส่ URL ของคุณ
+const API_URL = 'https://script.google.com/macros/s/วาง_ID_ของคุณ/exec'; // <-- อย่าลืมเปลี่ยนเป็น URL ของคุณ
 const MONTHS=['ต.ค.','พ.ย.','ธ.ค.','ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.'];
 const GROUPS={
  income:{title:'รายได้ (Planfin)',type:'flow',items:[['P04','รายได้ UC'],['P05','รายได้จาก EMS'],['P06','รายได้ค่ารักษาเบิกต้นสังกัด'],['P061','รายได้ค่ารักษา อปท.'],['P07','รายได้ค่ารักษาเบิกจ่ายตรงกรมบัญชีกลาง'],['P08','รายได้ประกันสังคม'],['P09','รายได้แรงงานต่างด้าว'],['P10','รายได้ค่ารักษาและบริการอื่นๆ'],['P11','รายได้งบประมาณส่วนบุคลากร'],['P12','รายได้อื่น'],['P13','รายได้งบลงทุน']]},
@@ -324,6 +287,7 @@ const $=s=>document.querySelector(s);
 const fmt=(x,d=2)=>x==null||isNaN(x)?'-':Number(x).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
 const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
 const n0=x=>x==null?0:x;
+
 function curFY(){const d=new Date();return d.getFullYear()+543+(d.getMonth()>=9?1:0);}
 function monthLabel(fy,m){return MONTHS[m-1]+'-'+String((m<=3?fy-1:fy)%100).padStart(2,'0');}
 function ingest(j){D={};P={};CRED=j.creditors||[];
@@ -351,13 +315,18 @@ async function api(action,payload={}){
 
 function go(view){
  document.querySelectorAll('.view').forEach(x=>x.classList.toggle('show',x.id==='v-'+view));
- if(view==='admin')checkLogin();
+ if(view==='dash'){ buildDashboard(); }
+ if(view==='admin'){ checkLogin(); }
 }
+
 function dashTab(id,btn){
  document.querySelectorAll('.dash-panel').forEach(p=>p.classList.toggle('show',p.id===id));
  document.querySelectorAll('#dashTabs .tab').forEach(b=>b.classList.toggle('active',b===btn));
 }
-function adminTab(id,btn){document.querySelectorAll('.admin-panel').forEach(p=>p.classList.toggle('show',p.id===id));document.querySelectorAll('.admin-panel ~ .tabs .tab,.tabs .tab').forEach(b=>b.classList.toggle('active',b===btn));}
+function adminTab(id,btn){
+ document.querySelectorAll('.admin-panel').forEach(p=>p.classList.toggle('show',p.id===id));
+ document.querySelectorAll('.admin-panel ~ .tabs .tab,.tabs .tab').forEach(b=>b.classList.toggle('active',b===btn));
+}
 
 function checkLogin(){
  const pw=sessionStorage.getItem('pw');
@@ -469,7 +438,7 @@ async function changePassword(){
  const np=$('#newPw').value.trim();if(!np||np.length<4)return toast('รหัสผ่านใหม่ต้องมีอย่างน้อย 4 ตัวอักษร','err');
  try{await api('changePassword',{newPassword:np});toast('เปลี่ยนรหัสผ่านสำเร็จ ✔');$('#newPw').value='';}catch(e){toast(e.message,'err');}
 }
-async function saveApiKey(){const key=$('#apiKeyIn'].value.trim();if(!key)return toast('ใส่ Key ด้วย','err');await api('saveApiKey',{apiKey:key});toast('บันทึก API Key แล้ว ✔');}
+async function saveApiKey(){const key=$('#apiKeyIn').value.trim();if(!key)return toast('ใส่ Key ด้วย','err');await api('saveApiKey',{apiKey:key});toast('บันทึก API Key แล้ว ✔');}
 function parseNum(s){if(s==null)return null;s=String(s).trim();if(s==='')return null;let neg=false;if(/^\(.*\)$/.test(s)){neg=true;s=s.slice(1,-1);}s=s.replace(/[,\s฿]/g,'');if(s==='-')return 0;const n=Number(s);return isNaN(n)?null:(neg?-n:n);}
 function sumR(y,c,a,b){let s=0;for(let i=a;i<=b;i++)s+=n0(v(y,i,c));return s;}
 
@@ -562,7 +531,7 @@ function mcData(fy,m){
   if(!inc&&!exp){inc=mcSum(fy,m,'income');exp=mcSum(fy,m,'expense');src='Planfin';}
   const cash=mcNum(fy,m,'P50'),inv=mcNum(fy,m,'INV'),debt=mcNum(fy,m,'P60');
   
-  const cr=mcNum(fy,m,'CR'),qr=mcNum(fy,m,'QR'),cashRatio=mcNum(fy,m,'CASH'),nwc=mcNum(fy,m,'NWC'),nidep=mcNum(fy,m,'NIDEP');
+  const cr=mcNum(fy,m,'CR'),qr=mcNum(fy,m,'QR'),cashRatio=mcNum(fy,m,'CASH'),nwc=mcNum(fy,m,'NWC');
   let score=0, reasons=[];
   if(cr>0 && cr<1){score+=2; reasons.push('CR < 1.0 (ทุนหมุนเวียนต่ำ)');}
   if(qr>0 && qr<0.8){score+=2; reasons.push('QR < 0.8 (สภาพคล่องเร็วต่ำ)');}
@@ -643,6 +612,8 @@ function renderMonthCompare(){
 }
 
 document.addEventListener('DOMContentLoaded',()=>{
+  buildMonthForm();
+  $('#credGroupsDl').innerHTML=CRED_GROUPS.map(g=>`<option value="${g}">`).join('');
   buildFilters();
   if(!API_URL.includes('script.google.com')){toast('กรุณาใส่ API_URL ของคุณ','err');return;}
   loadData();
