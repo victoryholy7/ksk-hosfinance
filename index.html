@@ -456,13 +456,37 @@ function ovSummaryValue(yy,mm,k){
  if(k==='P60')return credVal(yy,mm,'__TOTAL__');
  return null;
 }
+// จัดรูปแบบตัวเลขในช่องกรอกให้มี comma คั่นหลักพัน โดยยังคงทศนิยมไว้
+function formatOvNumber(value){
+ let s=String(value==null?'':value).replace(/,/g,'').trim();
+ if(!s || s==='-') return s;
+ const sign=s.startsWith('-')?'-':'';
+ s=s.replace(/-/g,'').replace(/[^0-9.]/g,'');
+ const dot=s.indexOf('.');
+ if(dot>=0) s=s.slice(0,dot+1)+s.slice(dot+1).replace(/\./g,'');
+ const parts=s.split('.');
+ const integer=(parts[0]||'0').replace(/\B(?=(\d{3})+(?!\d))/g,',');
+ return sign+integer+(parts.length>1?'.'+parts[1]:'');
+}
+function formatOvInput(el){
+ const old=el.value, pos=el.selectionStart==null?old.length:el.selectionStart;
+ const before=old.slice(0,pos).replace(/,/g,'').length;
+ const formatted=formatOvNumber(old);
+ el.value=formatted;
+ let seen=0,newPos=formatted.length;
+ for(let i=0;i<formatted.length;i++){
+   if(formatted[i]!==',') seen++;
+   if(seen>=before){newPos=i+1;break;}
+ }
+ try{el.setSelectionRange(newPos,newPos);}catch(e){}
+}
 function ovInput(yy,mm,k,value){
  const code={OPEN:'OV_OPEN',in:'OV_IN',out:'OV_OUT',P50:'OV_P50',INV:'OV_INV',P60:'OV_P60'}[k];
- const val=value==null?'':String(value);
- return `<input class="ov-edit" type="number" step="0.01" inputmode="decimal"
+ const val=value==null?'':formatOvNumber(value);
+ return `<input class="ov-edit" type="text" inputmode="decimal"
    aria-label="กรอกข้อมูล ${k} เดือน ${fullMonthLabel(yy,mm)}"
    data-year="${yy}" data-month="${mm}" data-code="${code}"
-   value="${esc(val)}" placeholder="-" oninput="updateOvSummaryPreview()">`;
+   value="${esc(val)}" placeholder="-" oninput="formatOvInput(this);updateOvSummaryPreview()">`;
 }
 function renderOvSummary(){
  const el=$('#ovSummary');if(!el)return;
@@ -482,7 +506,7 @@ function renderOvSummary(){
 function readOvInput(yy,mm,code){
  const el=document.querySelector(`.ov-edit[data-year="${yy}"][data-month="${mm}"][data-code="${code}"]`);
  if(!el || el.value.trim()==='')return null;
- const n=Number(el.value);return Number.isFinite(n)?n:null;
+ const n=Number(el.value.replace(/,/g,''));return Number.isFinite(n)?n:null;
 }
 function updateOvSummaryPreview(){
  const y=+$('#fYear').value,m=+$('#fMonth').value;if(!y||!m)return;
@@ -509,7 +533,7 @@ async function saveOvSummary(){
  document.querySelectorAll('.ov-edit').forEach(el=>{
   const y=+el.dataset.year,m=+el.dataset.month,id=y+'_'+m;
   if(!months[id])months[id]={year:y,month:m,values:{}};
-  months[id].values[el.dataset.code]=el.value.trim()===''?null:Number(el.value);
+  months[id].values[el.dataset.code]=el.value.trim()===''?null:Number(el.value.replace(/,/g,''));
  });
  if(!Object.keys(months).length)return;
  if(!confirm('ยืนยันบันทึกตัวเลขสรุปภาพรวมการเงินของสองเดือนนี้?'))return;
