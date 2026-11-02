@@ -79,6 +79,35 @@ table.t{width:100%;border-collapse:collapse;font-size:14px}
 @keyframes spin{to{transform:rotate(360deg)}}
 #toast{position:fixed;right:20px;bottom:20px;z-index:110;max-width:min(92vw,520px);padding:14px 20px;border-radius:14px;color:#fff;font-weight:600;background:linear-gradient(135deg,#065f46,#10b981);box-shadow:0 10px 24px rgba(0,0,0,.3);transform:translateY(200%);transition:.3s}
 #toast.show{transform:none}#toast.err{background:linear-gradient(135deg,#7f1d1d,#dc2626)}
+.sum-t{width:100%;border-collapse:separate;border-spacing:0;font-size:15px}
+.sum-t th{background:#0f8a74;color:#fff;padding:12px 14px;font-family:Prompt;font-weight:600;text-align:center;position:static}
+.sum-t th:first-child{text-align:left;border-radius:12px 0 0 0}.sum-t th:last-child{border-radius:0 12px 0 0}
+.sum-t th.cur{background:#ea6a12}
+.sum-t td{padding:14px;border-bottom:1px solid #eee7cc;vertical-align:middle}
+.sum-t td.lbl{font-family:Prompt;font-weight:600;color:#1e293b}
+.sum-t td.n{text-align:right;font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
+.sum-t td.cur{background:rgba(234,106,18,.07);color:#c2410c;font-size:17px;font-weight:700}
+.sum-t td.trend{text-align:center}
+.sum-t tr.final td{background:#fde8e4;font-family:Prompt;font-weight:700}
+.badge{display:inline-block;padding:4px 12px;border-radius:999px;font-size:13px;font-weight:600;white-space:nowrap}
+.b-good{background:#d1fae5;color:#047857;border:1px solid #6ee7b7}.b-bad{background:#fee2e2;color:#b91c1c;border:1px solid #fca5a5}.b-flat{background:#f1f5f9;color:#64748b;border:1px solid #cbd5e1}
+.b-strong{background:#b45309;color:#fff;padding:8px 14px;white-space:normal;line-height:1.3}
+.c-bad{color:#b91c1c}.c-good{color:#047857}.c-flat{color:#94a3b8}
+table.plan-t{font-size:13px}
+.plan-t th{text-align:center;white-space:nowrap;font-size:13px}
+.plan-t th.thm{background:linear-gradient(180deg,#4f94d8,#3b7fc4);color:#fff}
+.plan-t th.thcur{background:linear-gradient(180deg,#2f6fb8,#245a9a);color:#fff}
+.plan-t th.thsum{background:#fde9a8;color:#5a4200}
+.plan-t th.thplan{background:#22d3ee;color:#063a44}
+.plan-t th.thpct{background:#22e04a;color:#053b12}
+.plan-t td.sumc{background:#fff0c2;font-weight:700}
+.plan-t td.planc{background:#cffafe;font-weight:600}
+.plan-t td.pctc{text-align:center;font-weight:700}
+.plan-t td.curm{font-weight:700;background:#eef6ff}
+.plan-t td.nm{white-space:nowrap;font-weight:600;position:sticky;left:0;background:#fff;z-index:1}
+.plan-t tr.total td{background:linear-gradient(90deg,#bfe0ff,#9ccbf5)!important;color:#0b2a4a}
+.plan-t tr.total td.sumc{background:#fde68a!important}.plan-t tr.total td.planc{background:#a5f3fc!important}
+.pct-good{background:#bbf7d0;color:#14532d}.pct-bad{background:#fecaca;color:#991b1b}.pct-mid{background:#fef08a;color:#713f12}
 .dash-panel,.admin-panel{display:none}.dash-panel.show,.admin-panel.show{display:block}
 </style>
 </head>
@@ -135,10 +164,10 @@ table.t{width:100%;border-collapse:collapse;font-size:14px}
     <button class="tab" onclick="dashTab('p-cost',this)">📊 ต้นทุนหน่วยบริการ</button>
     <button class="tab" onclick="dashTab('p-cred',this)">🧾 เจ้าหนี้</button>
   </div>
-  <div class="dash-panel show" id="p-ov"><div class="grid g-kpi" id="ovKpi"></div><div class="grid g2"><div class="card"><h3>📊 รายได้ – ค่าใช้จ่าย</h3><div class="chart-box"><canvas id="ovTrend"></canvas></div></div><div class="card"><h3>💡 วิเคราะห์สำหรับกลุ่มงานบริหารทั่วไป</h3><ul class="ins" id="ovIns"></ul></div></div><div class="card"><h3>📈 เปรียบเทียบรายหมวด</h3><div class="tbl-wrap"><table class="t" id="ovCompare"></table></div></div></div>
+  <div class="dash-panel show" id="p-ov"><div class="card"><h3>📌 สรุปภาพรวมการเงิน เทียบเดือนก่อนหน้า</h3><div class="tbl-wrap"><table class="sum-t" id="ovSummary"></table></div><div class="note" id="ovSummaryNote"></div></div><div class="grid g-kpi" id="ovKpi"></div><div class="grid g2"><div class="card"><h3>📊 รายได้ – ค่าใช้จ่าย</h3><div class="chart-box"><canvas id="ovTrend"></canvas></div></div><div class="card"><h3>💡 วิเคราะห์สำหรับกลุ่มงานบริหารทั่วไป</h3><ul class="ins" id="ovIns"></ul></div></div><div class="card"><h3>📈 เปรียบเทียบรายหมวด</h3><div class="tbl-wrap"><table class="t" id="ovCompare"></table></div></div></div>
   <div class="dash-panel" id="p-pf"><div class="card"><h3>📋 วิเคราะห์ข้อมูล Planfin แยกรายการ</h3><div class="formbar"><div><label>หมวดข้อมูล</label><select id="pfGroup" onchange="populateDetailItems();renderDetailDashboard()"><option value="income">รายได้ Planfin</option><option value="expense">ค่าใช้จ่าย Planfin</option><option value="balance">ฐานะการเงิน</option></select></div><div><label>รายการ</label><select id="pfItem" onchange="renderDetailDashboard()"></select></div><div><label>รูปแบบกราฟ</label><select id="chartType" onchange="renderDetailDashboard()"><option value="bar">กราฟแท่ง</option><option value="line">กราฟเส้น</option></select></div></div><div class="chart-box"><canvas id="detailChart"></canvas></div><div id="detailAnalysis" class="status-line"></div></div><div class="card"><h3>📑 ตารางข้อมูล Planfin</h3><div class="tbl-wrap"><table class="t" id="pfTable"></table></div></div></div>
-  <div class="dash-panel" id="p-cashin"><div class="card"><h3>💰 วิเคราะห์รายรับ–เงินบำรุง</h3><div class="formbar"><div><label>เลือกรายการ</label><select id="cashInItem" onchange="renderCashPanel('cashIn')"></select></div><div><label>รูปแบบกราฟ</label><select id="cashInChartType" onchange="renderCashPanel('cashIn')"><option value="bar">กราฟแท่ง</option><option value="line">กราฟเส้น</option></select></div></div><div class="chart-box"><canvas id="cashInChart"></canvas></div><div id="cashInAnalysis" class="status-line"></div><div class="tbl-wrap"><table class="t" id="cashInTable"></table></div></div></div>
-  <div class="dash-panel" id="p-cashout"><div class="card"><h3>💸 วิเคราะห์รายจ่าย–เงินบำรุง</h3><div class="formbar"><div><label>เลือกรายการ</label><select id="cashOutItem" onchange="renderCashPanel('cashOut')"></select></div><div><label>รูปแบบกราฟ</label><select id="cashOutChartType" onchange="renderCashPanel('cashOut')"><option value="bar">กราฟแท่ง</option><option value="line">กราฟเส้น</option></select></div></div><div class="chart-box"><canvas id="cashOutChart"></canvas></div><div id="cashOutAnalysis" class="status-line"></div><div class="tbl-wrap"><table class="t" id="cashOutTable"></table></div></div></div>
+  <div class="dash-panel" id="p-cashin"><div class="card"><h3>💰 ตารางรายรับเงินบำรุง เทียบตามแผน</h3><div class="tbl-wrap"><table class="t plan-t" id="cashInMatrix"></table></div><div class="note" id="cashInMatrixNote"></div></div><div class="card"><h3>💰 วิเคราะห์รายรับ–เงินบำรุง</h3><div class="formbar"><div><label>เลือกรายการ</label><select id="cashInItem" onchange="renderCashPanel('cashIn')"></select></div><div><label>รูปแบบกราฟ</label><select id="cashInChartType" onchange="renderCashPanel('cashIn')"><option value="bar">กราฟแท่ง</option><option value="line">กราฟเส้น</option></select></div></div><div class="chart-box"><canvas id="cashInChart"></canvas></div><div id="cashInAnalysis" class="status-line"></div><div class="tbl-wrap"><table class="t" id="cashInTable"></table></div></div></div>
+  <div class="dash-panel" id="p-cashout"><div class="card"><h3>💸 ตารางรายจ่ายเงินบำรุง เทียบตามแผน</h3><div class="tbl-wrap"><table class="t plan-t" id="cashOutMatrix"></table></div><div class="note" id="cashOutMatrixNote"></div></div><div class="card"><h3>💸 วิเคราะห์รายจ่าย–เงินบำรุง</h3><div class="formbar"><div><label>เลือกรายการ</label><select id="cashOutItem" onchange="renderCashPanel('cashOut')"></select></div><div><label>รูปแบบกราฟ</label><select id="cashOutChartType" onchange="renderCashPanel('cashOut')"><option value="bar">กราฟแท่ง</option><option value="line">กราฟเส้น</option></select></div></div><div class="chart-box"><canvas id="cashOutChart"></canvas></div><div id="cashOutAnalysis" class="status-line"></div><div class="tbl-wrap"><table class="t" id="cashOutTable"></table></div></div></div>
   <div class="dash-panel" id="p-crisis"><div class="card"><h3>🚦 ตารางคำนวณอัตราส่วนทางการเงิน (วิกฤต 7 ระดับ)</h3><div class="formbar"><div><label>รายการอัตราส่วน</label><select id="crisisItem" onchange="renderCashPanel('crisis')"></select></div><div><label>รูปแบบกราฟ</label><select id="crisisChartType" onchange="renderCashPanel('crisis')"><option value="line">กราฟเส้น</option><option value="bar">กราฟแท่ง</option></select></div></div><div class="chart-box"><canvas id="crisisChart"></canvas></div><div id="crisisAnalysis" class="status-line"></div><div class="tbl-wrap"><table class="t" id="crisisTable"></table></div></div></div>
   <div class="dash-panel" id="p-cost"><div class="card"><h3>📊 ค่าเฉลี่ยและกลุ่มต้นทุนหน่วยบริการรายไตรมาส</h3><div class="note">เปรียบเทียบค่าเฉลี่ย +1SD ของกลุ่มโรงพยาบาลระดับเดียวกัน โดยแสดงข้อมูลที่บันทึกไว้ในระบบ</div><div class="formbar"><div><label>ตัวชี้วัดต้นทุน</label><select id="costMetric" onchange="renderCostDashboard()"><option value="op">ต้นทุนผู้ป่วยนอก (OPD)</option><option value="ip">ต้นทุนผู้ป่วยใน (IPD)</option></select></div><div><label>รูปแบบกราฟ</label><select id="costChartType" onchange="renderCostDashboard()"><option value="bar">กราฟแท่ง</option><option value="line">กราฟเส้น</option></select></div></div><div class="chart-box"><canvas id="costChart"></canvas></div><div id="costAnalysis" class="status-line"></div><div class="tbl-wrap"><table class="t" id="costTable"></table></div></div></div>
   <div class="dash-panel" id="p-cred">
@@ -236,6 +265,14 @@ table.t{width:100%;border-collapse:collapse;font-size:14px}
         </div>
         <div class="status-line" id="importStatus" style="margin-top:12px">พร้อมนำเข้า</div>
       </div>
+      <div class="card" style="border:2px dashed #0ea5e9">
+        <h3>🎯 ตั้งค่าแผนเงินบำรุงประจำปี (ใช้แสดงคอลัมน์ "ตามแผนเงินบำรุง" และ %)</h3>
+        <div class="formbar"><div><label>ปีงบประมาณ</label><select id="planYear" onchange="fillPlanForm()"></select></div>
+          <button class="btn btn-gold sm" onclick="loadPlanPreset()">📋 ใส่แผนปีงบ 2569 ตามรูป</button></div>
+        <div id="planForm"></div>
+        <button class="btn btn-green" onclick="savePlanForm()">💾 บันทึกแผนเงินบำรุง</button>
+        <p class="note">แผนเป็นยอดทั้งปีงบประมาณ ระบบจะนำไปเทียบกับยอดสะสมในตารางหน้า Dashboard รายรับ/รายจ่าย–เงินบำรุง</p>
+      </div>
       <div class="grid g2">
         <div class="card">
           <h3>🔑 เปลี่ยนรหัสผ่าน</h3>
@@ -278,6 +315,7 @@ const n0=x=>x==null?0:x;
 function curFY(){const d=new Date();return d.getFullYear()+543+(d.getMonth()>=9?1:0);}
 function monthLabel(fy,m){return MONTHS[m-1]+'-'+String((m<=3?fy-1:fy)%100).padStart(2,'0');}
 function ingest(j){D={};P={};CRED=j.creditors||[];COST=j.costBenchmarks||[];
+ (j.plan||[]).forEach(r=>{(P[r.y]??={});P[r.y][r.c]=Number(r.v);});
  (j.data||[]).forEach(r=>{(D[r.y]??={});(D[r.y][r.m]??={});D[r.y][r.m][r.c]=Number(r.v);});}
 const v=(y,m,c)=>D[y]?.[m]?.[c];
 function showLoading(b){$('#loading').classList.toggle('show',b);}
@@ -361,7 +399,7 @@ function buildDashboard(){
  FORM_GROUPS.forEach(g=>GROUPS[g].items.forEach(([c,n])=>{const a=dashVal(y,codeOf(g,c),ms,mode),b=dashVal(py,codeOf(g,c),ms,mode);t+=`<tr><td>${GROUPS[g].title}</td><td>${c}</td><td>${n}</td><td class="num">${fmt(a)}</td>`+(compare==='prev'?`<td class="num">${fmt(b)}</td><td class="num">${fmt(a-b)}</td><td class="num">${b?fmt(pctChange(a,b))+'%':'-'}</td>`:'')+'</tr>';}));
  $('#pfTable').innerHTML=t+'</tbody>';
  renderCredDashboard();
- populateDetailItems();renderDetailDashboard();populateAllDashboardSelectors();renderCashPanel('cashIn');renderCashPanel('cashOut');renderCashPanel('crisis');renderCostDashboard();
+ populateDetailItems();renderDetailDashboard();populateAllDashboardSelectors();renderCashPanel('cashIn');renderCashPanel('cashOut');renderCashPanel('crisis');renderCostDashboard();renderOvSummary();renderPlanMatrix('cashIn');renderPlanMatrix('cashOut');
 }
 function populateDetailItems(){const g=$('#pfGroup')?.value||'income',sel=$('#pfItem');if(!sel)return;const old=sel.value;sel.innerHTML=GROUPS[g].items.map(([c,n])=>`<option value="${c}">${c} – ${n}</option>`).join('');if(GROUPS[g].items.some(x=>x[0]===old))sel.value=old;}
 function renderDetailDashboard(){
@@ -382,6 +420,97 @@ function populateAllDashboardSelectors(){
   el.innerHTML=totalOption+GROUPS[g].items.map(([c,n])=>`<option value="${c}">${c} – ${n}</option>`).join('');
   if([...el.options].some(o=>o.value===old))el.value=old;
  });
+}
+
+// ---------- สรุปภาพรวมเทียบเดือนก่อน ----------
+const FULL_MONTHS=['ตุลาคม','พฤศจิกายน','ธันวาคม','มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน'];
+function fullMonthLabel(fy,m){return FULL_MONTHS[m-1]+' '+(m<=3?fy-1:fy);}
+function prevPeriod(y,m){return m>1?[y,m-1]:[y-1,12];}
+function monthHasData(y,m){return !!D[y]?.[m]&&Object.keys(D[y][m]).length>0;}
+function monthSum(y,m,g){return GROUPS[g].items.reduce((s,[c])=>s+(Number(v(y,m,codeOf(g,c)))||0),0);}
+function renderOvSummary(){
+ const el=$('#ovSummary');if(!el)return;
+ const y=+$('#fYear').value,m=+$('#fMonth').value;if(!y||!m)return;
+ const [py,pm]=prevPeriod(y,m),hasC=monthHasData(y,m),hasP=monthHasData(py,pm);
+ const get=(yy,mm,k)=>{if(!monthHasData(yy,mm))return null;
+  if(k==='in')return monthSum(yy,mm,'cashIn');
+  if(k==='out')return monthSum(yy,mm,'cashOut');
+  return Number(v(yy,mm,k))||0;};
+ const rows=[['1. รายรับรวม','in','up'],['2. รายจ่ายรวม','out','down'],['3. เงินบำรุงคงเหลือ','P50','up'],['4. หัก งบลงทุน','INV','down'],['5. หัก หนี้สิน','P60','down']];
+ const badge=(pct,good,label)=>{
+  if(pct==null)return '<span class="badge b-flat">– ไม่มีข้อมูลเทียบ</span>';
+  if(Math.abs(pct)<0.005)return '<span class="badge b-flat">– คงที่ 0.00%</span>';
+  const arrow=pct>0?'↑':'↓',word=pct>0?'เพิ่มขึ้น':'ลดลง';
+  return `<span class="badge ${good?'b-good':'b-bad'}">${arrow} ${word} ${fmt(Math.abs(pct))}%</span>`;};
+ let h=`<thead><tr><th>รายการสรุป</th><th>${fullMonthLabel(py,pm)}</th><th class="cur">${fullMonthLabel(y,m)}</th><th>แนวโน้ม (%)</th><th>ส่วนต่าง</th></tr></thead><tbody>`;
+ const vals={};
+ rows.forEach(([lbl,k,goodDir])=>{
+  const a=get(py,pm,k),b=get(y,m,k);vals[k]=[a,b];
+  const diff=(a!=null&&b!=null)?b-a:null,pct=(a!=null&&b!=null)?pctChange(b,a):null;
+  const good=pct==null?true:(goodDir==='up'?pct>0:pct<0);
+  const dcls=diff==null||Math.abs(diff)<0.005?'c-flat':(good?'c-good':'c-bad');
+  h+=`<tr><td class="lbl">${lbl}</td><td class="n">${a==null?'-':fmt(a)}</td><td class="n cur">${b==null?'-':fmt(b)}</td><td class="trend">${badge(pct,good)}</td><td class="n ${dcls}">${diff==null?'-':(diff>0?'+':'')+fmt(diff)}</td></tr>`;
+ });
+ const net=(r)=>vals.P50[r]==null?null:(vals.P50[r]||0)-(vals.INV[r]||0)-(vals.P60[r]||0);
+ const a=net(0),b=net(1),diff=(a!=null&&b!=null)?b-a:null,pct=(a!=null&&b!=null)?pctChange(b,a):null;
+ let nb;
+ if(pct==null)nb='<span class="badge b-flat">– ไม่มีข้อมูลเทียบ</span>';
+ else if(Math.abs(pct)>=10)nb=`<span class="badge b-strong">${pct>0?'↑ เพิ่มขึ้น':'↓ ลดลง'}อย่างมีนัยสำคัญ<br>${fmt(Math.abs(pct))}%</span>`;
+ else nb=`<span class="badge ${pct>=0?'b-good':'b-bad'}">${pct>=0?'↑ เพิ่มขึ้น':'↓ ลดลง'} ${fmt(Math.abs(pct))}%</span>`;
+ h+=`<tr class="final"><td class="lbl" style="color:#7f1d1d">หลังหักคงเหลือ</td><td class="n">${a==null?'-':fmt(a)}</td><td class="n cur" style="color:${b!=null&&b<0?'#b91c1c':'#b91c1c'}">${b==null?'-':fmt(b)}</td><td class="trend">${nb}</td><td class="n ${diff==null?'c-flat':(diff>=0?'c-good':'c-bad')}">${diff==null?'-':(diff>0?'+':'')+fmt(diff)}</td></tr></tbody>`;
+ el.innerHTML=h;
+ $('#ovSummaryNote').textContent='หลังหักคงเหลือ = เงินบำรุงคงเหลือ − งบลงทุน − หนี้สิน | รายรับ/รายจ่ายรวมคำนวณจากข้อมูลเงินบำรุงรายเดือน'+((!hasC||!hasP)?' | ⚠️ บางเดือนยังไม่มีข้อมูลในระบบ':'');
+}
+
+// ---------- ตารางรายรับ/รายจ่ายเงินบำรุง เทียบแผน ----------
+function renderPlanMatrix(g){
+ const tb=$('#'+g+'Matrix');if(!tb)return;
+ const y=+$('#fYear').value,m=+$('#fMonth').value,q=$('#fQuarter').value;
+ const ms=q!=='all'?[1,2,3].map(i=>(+q-1)*3+i):Array.from({length:m},(_,i)=>i+1);
+ const plan=P[y]||{},isIn=g==='cashIn',items=GROUPS[g].items;
+ const lastM=ms[ms.length-1];
+ let h='<thead><tr><th style="text-align:left">รายการ/หมวดหมู่</th>'+ms.map(x=>`<th class="${x===lastM?'thcur':'thm'}">${monthLabel(y,x)}</th>`).join('')+`<th class="thsum">รวม ${ms.length} เดือน<br><small>${monthLabel(y,ms[0])} – ${monthLabel(y,lastM)}</small></th><th class="thplan">ตามแผนเงินบำรุง</th><th class="thpct">%</th></tr></thead><tbody>`;
+ const pctCell=(p)=>{if(p==null)return '<td class="pctc">-</td>';const bad=isIn?p<80:p>100,good=isIn?p>=100:p<=100;return `<td class="pctc ${good?'pct-good':bad?'pct-bad':'pct-mid'}">${fmt(p)}%</td>`;};
+ const colTot=ms.map(()=>0);let sumAll=0,planAll=0,hasPlan=false;
+ items.forEach(([c,n])=>{
+  const k=codeOf(g,c),vs=ms.map(x=>v(y,x,k)),tot=vs.reduce((s,z)=>s+(Number(z)||0),0),pl=plan[k];
+  vs.forEach((z,i)=>colTot[i]+=Number(z)||0);sumAll+=tot;if(pl!=null){planAll+=pl;hasPlan=true;}
+  const pct=(pl&&pl!==0)?tot/pl*100:null;
+  h+=`<tr><td class="nm">${c} ${n}</td>`+vs.map((z,i)=>`<td class="num${ms[i]===lastM?' curm':''}">${z==null||Number(z)===0?'-':fmt(z)}</td>`).join('')+`<td class="num sumc">${tot===0?'-':fmt(tot)}</td><td class="num planc">${pl==null||pl===0?'-':fmt(pl)}</td>${pctCell(pct)}</tr>`;
+ });
+ const pctAll=(hasPlan&&planAll)?sumAll/planAll*100:null;
+ h+=`<tr class="total"><td class="nm" style="background:#9ccbf5">${isIn?'รวมรับประจำเดือนทั้งสิ้น':'รวมจ่ายประจำเดือน'}</td>`+colTot.map(z=>`<td class="num">${fmt(z)}</td>`).join('')+`<td class="num sumc">${fmt(sumAll)}</td><td class="num planc">${hasPlan?fmt(planAll):'-'}</td>${pctCell(pctAll)}</tr></tbody>`;
+ tb.innerHTML=h;
+ $('#'+g+'MatrixNote').textContent=hasPlan?'% = ยอดรวมสะสม ÷ แผนทั้งปีงบประมาณ × 100 '+(isIn?'(เขียว = ถึงแผนแล้ว, แดง = ต่ำกว่า 80% ของแผน)':'(เขียว = ไม่เกินแผน, แดง = เกินแผน)'):'ยังไม่มีข้อมูลแผนเงินบำรุงของปีนี้ กรุณาตั้งค่าที่ Admin → ตั้งค่าระบบ → ตั้งค่าแผนเงินบำรุงประจำปี';
+}
+
+// ---------- ตั้งค่าแผนเงินบำรุง (Admin) ----------
+const PLAN_PRESET_2569={CI_P04:27000000,CI_P05:60000,CI_P06:30000,CI_P061:530000,CI_P07:4400000,CI_P08:1000000,CI_P09:3000000,CI_P10:13252110,CI_P12:1147890,CI_P13:1170808.11,CO_P14:6424637.61,CO_P15:2522743.20,CO_P151:357141,CO_P16:1766202,CO_P18:8460240,CO_P19:13288230,CO_P20:822742,CO_P21:11629976.89,CO_P22:1724400,CO_P23:2170000,CO_P25:100000,CO_P26:642000};
+function buildPlanForm(){
+ const el=$('#planForm');if(!el)return;
+ const blk=(g,title)=>`<details class="fgroup" open><summary><span>${title}</span></summary><div class="fgrid">${GROUPS[g].items.map(([c,n])=>`<label class="fi"><span><b>${c}</b> ${n}</span><input id="plan_${codeOf(g,c)}" data-k="${codeOf(g,c)}" inputmode="decimal" placeholder="0.00"></label>`).join('')}</div></details>`;
+ el.innerHTML=blk('cashIn','แผนรายรับเงินบำรุง (ทั้งปี)')+blk('cashOut','แผนรายจ่ายเงินบำรุง (ทั้งปี)');
+ fillPlanForm();
+}
+function fillPlanForm(){
+ const y=+$('#planYear')?.value;if(!y)return;const pl=P[y]||{};
+ document.querySelectorAll('#planForm input[data-k]').forEach(i=>{const x=pl[i.dataset.k];i.value=x==null?'':x;});
+}
+function loadPlanPreset(){
+ document.querySelectorAll('#planForm input[data-k]').forEach(i=>{const x=PLAN_PRESET_2569[i.dataset.k];i.value=x==null?'':x;});
+ $('#planYear').value=[...$('#planYear').options].some(o=>o.value==='2569')?'2569':$('#planYear').value;
+ toast('ใส่ค่าแผนปีงบ 2569 ตามรูปแล้ว กรุณาตรวจสอบและกด "บันทึกแผนเงินบำรุง"');
+}
+async function savePlanForm(){
+ const y=+$('#planYear').value;if(!y)return;
+ const values=Object.assign({},P[y]||{});let err=null;
+ document.querySelectorAll('#planForm input[data-k]').forEach(i=>{
+  const raw=i.value.trim();if(raw===''){delete values[i.dataset.k];return;}
+  const n=parseNum(raw);if(n==null){err=i.dataset.k;return;}values[i.dataset.k]=n;});
+ if(err)return toast('ตัวเลขไม่ถูกต้องที่ '+err,'err');
+ if(!confirm(`ยืนยันบันทึกแผนเงินบำรุงปีงบ ${y} ?`))return;
+ try{await api('savePlan',{year:y,values},{keepForm:true});buildDashboard();toast('บันทึกแผนเงินบำรุงสำเร็จ ✔');}
+ catch(e){toast(e.message,'err');}
 }
 function renderCashPanel(g){
  const y=+$('#fYear').value,ms=monthsForDash(),compare=$('#fCompare').value,py=y-1;
@@ -557,11 +686,12 @@ function buildFilters(){
  const keepY=$('#aYear').value,keepM=$('#aMonth').value,keepFY=dashFiltersInitialized?$('#fYear').value:'',keepFM=dashFiltersInitialized?$('#fMonth').value:'';
  $('#fYear').innerHTML=ys.map(y=>`<option value="${y}">ปีงบ ${y}</option>`).join('');
  $('#aYear').innerHTML=ys.map(y=>`<option value="${y}">ปีงบ ${y}</option>`).join('');
+ const keepPY=$('#planYear')?.value;if($('#planYear')){$('#planYear').innerHTML=ys.map(y=>`<option value="${y}">ปีงบ ${y}</option>`).join('');if(keepPY&&ys.includes(+keepPY))$('#planYear').value=keepPY;}
  $('#aMonth').innerHTML=MONTHS.map((x,i)=>`<option value="${i+1}">${x}</option>`).join('');
  if(keepY&&ys.includes(+keepY))$('#aYear').value=keepY; if(keepM)$('#aMonth').value=keepM;
  if(keepFY&&ys.includes(+keepFY))$('#fYear').value=keepFY;
  const fy=+$('#fYear').value;refreshDashMonthOptions(keepFM);const avail=(D[fy]?Object.keys(D[fy]).map(Number):[]);if(keepFM&&avail.includes(+keepFM))$('#fMonth').value=keepFM;else $('#fMonth').value=String(avail.length?Math.max(...avail):12);
- dashFiltersInitialized=true;fillMonthForm();populateAllDashboardSelectors();
+ dashFiltersInitialized=true;fillMonthForm();populateAllDashboardSelectors();if(document.querySelector('#planForm')&&!document.querySelector('#planForm input'))buildPlanForm();else fillPlanForm();
 }
 
 /* ---------- AI อ่านรูป ---------- */
