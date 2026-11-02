@@ -68,7 +68,7 @@ table.t{width:100%;border-collapse:collapse;font-size:14px}
 .gt{color:#fde68a}
 .fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr));gap:10px 18px;padding:16px}
 .fi{display:flex;flex-direction:column;gap:4px;font-size:14px}.fi b{color:var(--g3)}.fi input{text-align:right}
-.fi input.ai-filled{background:linear-gradient(180deg,#ecfdf5,#d1fae5);border-color:#10b981}
+input.ai-filled{background:linear-gradient(180deg,#ecfdf5,#d1fae5);border-color:#10b981}
 .savebar{display:flex;gap:12px;flex-wrap:wrap;justify-content:flex-end;position:sticky;bottom:10px;padding:12px;border-radius:16px;background:rgba(255,255,255,.94);box-shadow:0 8px 24px rgba(0,0,0,.2);margin-top:10px}
 .note{font-size:13px;color:var(--muted);margin-top:6px}
 .status-line{padding:8px 12px;border-radius:10px;background:#fef9c3;color:#713f12;font-size:14px;margin-bottom:12px}
@@ -218,8 +218,8 @@ table.plan-t{font-size:13px}
         <div class="status-line" id="aStatus">พร้อมใช้งาน</div>
 
         <div class="card" style="background:linear-gradient(135deg,#ecfdf5,#d1fae5);border:2px dashed #10b981;margin-bottom:14px">
-          <h3 style="color:#065f46">🤖 AI อ่านรูปภาพรายงานอัตโนมัติ (ข้อมูลเดือน + เจ้าหนี้)</h3>
-          <p class="note" style="color:#047857;margin-bottom:8px">อัปโหลดรูปภาพรายงานการเงินหรือตารางเจ้าหนี้ AI จะเติมข้อมูลลงฟอร์มและตารางด้านล่างให้ทันที (ช่องที่ AI เติมจะเป็นสีเขียว กรุณาตรวจสอบก่อนกดบันทึก)</p>
+          <h3 style="color:#065f46">🤖 AI อ่านรูปภาพรายงานอัตโนมัติ (ข้อมูลเดือน + เจ้าหนี้ + วิกฤต 7 ระดับ + ต้นทุน)</h3>
+          <p class="note" style="color:#047857;margin-bottom:8px">เลือกปีและเดือนด้านบนให้ตรงกับรายงานก่อน แล้วอัปโหลดรูป AI จะอ่านเฉพาะคอลัมน์/แถวของเดือนที่เลือกและเติมลงฟอร์มให้ (ช่องที่ AI เติมจะเป็นสีเขียว กรุณาตรวจสอบก่อนกดบันทึก)</p>
           <input type="file" id="aiImageFile" accept="image/*" style="display:none" onchange="handleAIImage(this)">
           <button class="btn btn-green" onclick="$('#aiImageFile').click()">📸 เลือกรูปภาพรายงานเพื่อกรอกอัตโนมัติ</button>
         </div>
@@ -759,42 +759,67 @@ function mapAiCode(type,k){
   return null;
  }
  if(type==='planfin'){
-  if(c==='P40')return 'NWC';
-  return c;
+  if(c==='P40'||c==='NWC')return 'NWC';
+  if(/^P(0[4-9]|1[0-3]|061|1[4-9]|2[0-5]|151|421|50|60)$/.test(c))return c;
+  return null;
+ }
+ if(type==='crisis'){
+  return ({CR:'CR',QR:'QR',CASH:'CASH',NWC:'NWC',NIDEP:'NIDEP'})[c]||null;
  }
  return null;
 }
 
+// ต้นทุนหน่วยบริการ: เติมลงฟอร์มของ "เดือนที่เลือก" (ไม่ดูไตรมาส)
+function fillCostFromAI(vals,y,m){
+ $('#costYear').value=y;$('#costMonth').value=String(m);
+ fillCostForm();
+ const map={hospTotal:'costHospTotal',hospUsed:'costHospUsed',ipUsed:'costIPUsed',opMean:'costOPMean',opSd:'costOPSD',opLimit:'costOPLimit',ipMean:'costIPMean',ipSd:'costIPSD',ipLimit:'costIPLimit'};
+ let n=0;
+ Object.entries(map).forEach(([k,id])=>{
+  const x=parseNum(vals[k]);
+  if(x!=null){const el=$('#'+id);el.value=x;el.classList.add('ai-filled');n++;}
+ });
+ const card=$('#costYear').closest('.card');if(card)card.scrollIntoView({behavior:'smooth',block:'center'});
+ return n;
+}
+
 async function handleAIImage(input){
  const file=input.files[0];if(!file)return;
- toast('🤖 AI กำลังอ่านรูปภาพ... (อาจใช้เวลา 10-60 วินาที)');
+ const sy=+$('#aYear').value,sm=+$('#aMonth').value;
+ const ctx={monthLabel:monthLabel(sy,sm),monthName:FULL_MONTHS[sm-1],calMonth:((sm+8)%12)+1,calYearBE:sm<=3?sy-1:sy};
+ toast(`🤖 AI กำลังอ่านรูปภาพ สำหรับเดือน ${ctx.monthLabel} ... (อาจใช้เวลา 10-60 วินาที)`);
  try{
   const base64=await resizeImage(file);
-  const res=await api('parseImage',{image:base64,mimeType:'image/jpeg'});
+  const res=await api('parseImage',Object.assign({image:base64,mimeType:'image/jpeg'},ctx));
   const r=res.result||{};
   const type=String(r.report_type||'').toLowerCase();
   const vals=r.values||{};
   const hasVals=Object.keys(vals).length>0;
 
-  if(hasVals&&type!=='cash'&&type!=='planfin'){
-   throw new Error('AI ระบุชนิดรายงานไม่ได้ (ต้องเป็นรายงานเงินบำรุง หรือ Planfin) ลองถ่ายให้เห็นหัวรายงานชัดๆ แล้วลองใหม่');
+  if(hasVals&&!['cash','planfin','crisis','cost'].includes(type)){
+   throw new Error('AI ระบุชนิดรายงานไม่ได้ ลองถ่ายให้เห็นหัวรายงานชัดๆ แล้วลองใหม่');
   }
 
-  document.querySelectorAll('.fi input.ai-filled').forEach(x=>x.classList.remove('ai-filled'));
-  let filled=0;
-  Object.entries(vals).forEach(([k,val])=>{
-   const id=mapAiCode(type,k);if(!id)return;
-   const el=document.getElementById('in_'+id);
-   const num=parseNum(val);
-   if(el&&num!=null){
-    el.value=num;el.classList.add('ai-filled');filled++;
-    const d=el.closest('details');if(d)d.open=true;
-   }
-  });
-  // รายงานทั้งสองชนิดแสดงยอดสะสม จึงติ๊ก "กรอกยอดสะสม" ให้อัตโนมัติ
-  if(filled>0)$('#aCum').checked=true;
+  // ค่าที่ AI เติมเป็นยอดของเดือนที่เลือกโดยตรง ไม่ใช่ยอดสะสม จึงปิดโหมด "กรอกยอดสะสม"
+  if($('#aCum').checked){$('#aCum').checked=false;fillMonthForm();}
+  document.querySelectorAll('input.ai-filled').forEach(x=>x.classList.remove('ai-filled'));
 
-  const creds=Array.isArray(r.creditors)?r.creditors:[];
+  let filled=0;
+  if(type==='cost'){
+   filled=fillCostFromAI(vals,sy,sm);
+  }else{
+   Object.entries(vals).forEach(([k,val])=>{
+    const id=mapAiCode(type,k);if(!id)return;
+    const el=document.getElementById('in_'+id);
+    const num=parseNum(val);
+    if(el&&num!=null){
+     el.value=num;el.classList.add('ai-filled');filled++;
+     const d=el.closest('details');if(d)d.open=true;
+    }
+   });
+  }
+
+  const creds=(Array.isArray(r.creditors)?r.creditors:[]).filter(c=>c&&c.n&&!/^\s*รวม/.test(String(c.n)));
   if(creds.length)fillCredForm(creds.map(c=>({n:c.n,g:c.g,a:parseNum(c.a)??0})));
 
   // เตือนถ้าเดือนในรูปไม่ตรงกับเดือนที่เลือกในฟอร์ม
@@ -802,15 +827,15 @@ async function handleAIImage(input){
   const rm=+r.report_month,ry=+r.report_year_be;
   if(rm>=1&&rm<=12&&ry>2500){
    const fm=((rm-10+12)%12)+1,fy=ry+(rm>=10?1:0);
-   const sy=+$('#aYear').value,sm=+$('#aMonth').value;
    if(fy!==sy||fm!==sm)warn=` ⚠️ รูปนี้เป็นรายงานเดือน ${monthLabel(fy,fm)} แต่ฟอร์มเลือก ${monthLabel(sy,sm)} กรุณาตรวจสอบเดือนก่อนบันทึก`;
   }
 
   calcTotals();
-  const label={cash:'รายงานเงินบำรุง',planfin:'รายงาน Planfin',creditors:'ตารางเจ้าหนี้'}[type]||'รายงาน';
+  const label={cash:'รายงานเงินบำรุง',planfin:'รายงาน Planfin',creditors:'ตารางเจ้าหนี้',crisis:'ตารางวิกฤต 7 ระดับ',cost:'ตารางต้นทุนหน่วยบริการ'}[type]||'รายงาน';
   const ok=filled||creds.length;
-  toast(ok?`AI อ่าน${label}สำเร็จ: ข้อมูล ${filled} รายการ, เจ้าหนี้ ${creds.length} รายการ ✔ (ตรวจสอบก่อนกดบันทึก)${warn}`
-          :'AI อ่านรูปแล้วแต่ไม่พบข้อมูลที่ตรงกับฟอร์ม',(ok&&!warn)?'':'err');
+  const hint=type==='cost'?' (กดปุ่ม "บันทึกข้อมูลต้นทุนรายเดือน" ในกล่องต้นทุนเพื่อบันทึก)':' (ตรวจสอบก่อนกดบันทึก)';
+  toast(ok?`AI อ่าน${label}ของ ${ctx.monthLabel} สำเร็จ: ข้อมูล ${filled} รายการ`+(creds.length?`, เจ้าหนี้ ${creds.length} รายการ`:'')+' ✔'+hint+warn
+          :'AI อ่านรูปแล้วแต่ไม่พบข้อมูลที่ตรงกับฟอร์ม (ตรวจสอบว่าเลือกเดือนตรงกับรูป)',(ok&&!warn)?'':'err');
  }catch(e){
   toast('อ่านรูปไม่สำเร็จ: '+e.message,'err');
  }finally{
