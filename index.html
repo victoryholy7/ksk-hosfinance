@@ -172,7 +172,7 @@ table.t{width:100%;border-collapse:collapse;font-size:14px}
   
   <div class="dash-panel show" id="p-ov">
     <div class="card" id="mcCard">
-      <h3>📋 สรุปฐานะเงินบำรุง เทียบเดือนก่อน <span id="mcSub" style="font-size:14px;color:#64748b;font-weight:400"></span></h3>
+      <h3>📋 สรุปภาพรวมและฐานะเงินบำรุง เทียบเดือนก่อน <span id="mcSub" style="font-size:14px;color:#64748b;font-weight:400"></span></h3>
       <div class="tbl-wrap"><table class="mc" id="mcTable"></table></div>
       <div class="mc-ana" id="mcAnalysis"></div>
     </div>
@@ -518,7 +518,7 @@ function renderCredDashboard(){
 
 function onFilter(){buildDashboard();}
 
-/* ===== สรุปฐานะเงินบำรุงเทียบเดือนก่อน + Risk Score วิกฤติ 7 ระดับ ===== */
+/* ===== สรุปฐานะเงินบำรุงเทียบเดือนก่อน + Card Dashboard & Risk Score ===== */
 const MC_MONTHS=['ตุลาคม','พฤศจิกายน','ธันวาคม','มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน'];
 function mcLabel(fy,m){return MC_MONTHS[m-1]+' '+(m<=3?fy-1:fy);}
 function mcPrev(fy,m){return m>1?[fy,m-1]:[fy-1,12];}
