@@ -89,6 +89,12 @@ input.ai-filled{background:linear-gradient(180deg,#ecfdf5,#d1fae5);border-color:
 .sum-t td.cur{background:rgba(234,106,18,.07);color:#c2410c;font-size:17px;font-weight:700}
 .sum-t td.trend{text-align:center}
 .sum-t tr.final td{background:#fde8e4;font-family:Prompt;font-weight:700}
+/* ช่องกรอกตัวเลขในตารางสรุปเดิม: คงสีและโครงสร้างตารางเดิม */
+.sum-t .ov-edit{width:100%;min-width:105px;box-sizing:border-box;padding:5px 7px;border:1px solid #d8d2bd;border-radius:6px;background:rgba(255,255,255,.78);color:#172033;font:600 15px Sarabun,sans-serif;text-align:right;font-variant-numeric:tabular-nums}
+.sum-t td.cur .ov-edit{background:rgba(255,255,255,.65);color:#c2410c;border-color:#e8bd98}
+.sum-t .ov-edit:focus{outline:2px solid rgba(15,138,116,.25);border-color:#0f8a74}
+.sum-t tr.final .ov-edit{background:#fff7f5}
+
 .badge{display:inline-block;padding:4px 12px;border-radius:999px;font-size:13px;font-weight:600;white-space:nowrap}
 .b-good{background:#d1fae5;color:#047857;border:1px solid #6ee7b7}.b-bad{background:#fee2e2;color:#b91c1c;border:1px solid #fca5a5}.b-flat{background:#f1f5f9;color:#64748b;border:1px solid #cbd5e1}
 .b-strong{background:#b45309;color:#fff;padding:8px 14px;white-space:normal;line-height:1.3}
@@ -435,41 +441,80 @@ function cashBalance(yy,mm){
  for(let i=1;i<=mm;i++){inc+=monthSum(yy,i,'cashIn');exp+=monthSum(yy,i,'cashOut');}
  return open+inc-exp;
 }
+// ---------- สรุปภาพรวมเทียบเดือนก่อน: หน้าตาเดิม + กรอกตัวเลขได้ ----------
+function ovSummaryValue(yy,mm,k){
+ // ถ้ามีข้อมูลที่ผู้ใช้กรอกเอง ให้ใช้ค่านั้นก่อน
+ const manualCode={in:'OV_IN',out:'OV_OUT',P50:'OV_P50',INV:'OV_INV',P60:'OV_P60'}[k];
+ const manual=manualCode ? v(yy,mm,manualCode) : null;
+ if(manual!==undefined && manual!==null && manual!=='') return Number(manual);
+ // หากยังไม่เคยกรอก ให้แสดงค่าจากระบบเดิมเพื่อไม่ให้ข้อมูลเดิมหาย
+ if(!monthHasData(yy,mm)) return null;
+ if(k==='in')return monthSum(yy,mm,'cashIn')-(Number(v(yy,mm,'CI_P13'))||0);
+ if(k==='out')return monthSum(yy,mm,'cashOut');
+ if(k==='P50')return cashBalance(yy,mm);
+ if(k==='INV')return cumCash(yy,mm,'CI_P13');
+ if(k==='P60')return credVal(yy,mm,'__TOTAL__');
+ return null;
+}
+function ovInput(yy,mm,k,value){
+ const code={in:'OV_IN',out:'OV_OUT',P50:'OV_P50',INV:'OV_INV',P60:'OV_P60'}[k];
+ const val=value==null?'':String(value);
+ return `<input class="ov-edit" type="number" step="0.01" inputmode="decimal"
+   aria-label="กรอกข้อมูล ${k} เดือน ${fullMonthLabel(yy,mm)}"
+   data-year="${yy}" data-month="${mm}" data-code="${code}"
+   value="${esc(val)}" placeholder="-" oninput="updateOvSummaryPreview()">`;
+}
 function renderOvSummary(){
  const el=$('#ovSummary');if(!el)return;
  const y=+$('#fYear').value,m=+$('#fMonth').value;if(!y||!m)return;
  const [py,pm]=prevPeriod(y,m),hasC=monthHasData(y,m),hasP=monthHasData(py,pm);
- const get=(yy,mm,k)=>{if(!monthHasData(yy,mm))return null;
-  if(k==='in')return monthSum(yy,mm,'cashIn')-(Number(v(yy,mm,'CI_P13'))||0);
-  if(k==='out')return monthSum(yy,mm,'cashOut');
-  if(k==='P50')return cashBalance(yy,mm);
-  if(k==='INV')return cumCash(yy,mm,'CI_P13');
-  if(k==='P60')return credVal(yy,mm,'__TOTAL__');
-  return null;};
  const rows=[['1. รายรับรวม','in','up'],['2. รายจ่ายรวม','out','down'],['3. เงินบำรุงคงเหลือ','P50','up'],['4. หัก งบลงทุน','INV','down'],['5. หัก หนี้สิน','P60','down']];
- const badge=(pct,good,label)=>{
-  if(pct==null)return '<span class="badge b-flat">– ไม่มีข้อมูลเทียบ</span>';
-  if(Math.abs(pct)<0.005)return '<span class="badge b-flat">– คงที่ 0.00%</span>';
-  const arrow=pct>0?'↑':'↓',word=pct>0?'เพิ่มขึ้น':'ลดลง';
-  return `<span class="badge ${good?'b-good':'b-bad'}">${arrow} ${word} ${fmt(Math.abs(pct))}%</span>`;};
  let h=`<thead><tr><th>รายการสรุป</th><th>${fullMonthLabel(py,pm)}</th><th class="cur">${fullMonthLabel(y,m)}</th><th>แนวโน้ม (%)</th><th>ส่วนต่าง</th></tr></thead><tbody>`;
- const vals={};
- rows.forEach(([lbl,k,goodDir])=>{
-  const a=get(py,pm,k),b=get(y,m,k);vals[k]=[a,b];
-  const diff=(a!=null&&b!=null)?b-a:null,pct=(a!=null&&b!=null)?pctChange(b,a):null;
-  const good=pct==null?true:(goodDir==='up'?pct>0:pct<0);
-  const dcls=diff==null||Math.abs(diff)<0.005?'c-flat':(good?'c-good':'c-bad');
-  h+=`<tr><td class="lbl">${lbl}</td><td class="n">${a==null?'-':fmt(a)}</td><td class="n cur">${b==null?'-':fmt(b)}</td><td class="trend">${badge(pct,good)}</td><td class="n ${dcls}">${diff==null?'-':(diff>0?'+':'')+fmt(diff)}</td></tr>`;
+ rows.forEach(([lbl,k])=>{
+   const a=ovSummaryValue(py,pm,k),b=ovSummaryValue(y,m,k);
+   h+=`<tr><td class="lbl">${lbl}</td><td class="n">${ovInput(py,pm,k,a)}</td><td class="n cur">${ovInput(y,m,k,b)}</td><td class="trend" id="ovTrend_${k}">-</td><td class="n" id="ovDiff_${k}">-</td></tr>`;
  });
- const net=(r)=>[vals.P50[r],vals.INV[r],vals.P60[r]].some(x=>x==null)?null:vals.P50[r]-vals.INV[r]-vals.P60[r];
- const a=net(0),b=net(1),diff=(a!=null&&b!=null)?b-a:null,pct=(a!=null&&b!=null)?pctChange(b,a):null;
- let nb;
- if(pct==null)nb='<span class="badge b-flat">– ไม่มีข้อมูลเทียบ</span>';
- else if(Math.abs(pct)>=10)nb=`<span class="badge b-strong">${pct>0?'↑ เพิ่มขึ้น':'↓ ลดลง'}อย่างมีนัยสำคัญ<br>${fmt(Math.abs(pct))}%</span>`;
- else nb=`<span class="badge ${pct>=0?'b-good':'b-bad'}">${pct>=0?'↑ เพิ่มขึ้น':'↓ ลดลง'} ${fmt(Math.abs(pct))}%</span>`;
- h+=`<tr class="final"><td class="lbl" style="color:#7f1d1d">หลังหักคงเหลือ</td><td class="n">${a==null?'-':fmt(a)}</td><td class="n cur" style="color:${b!=null&&b<0?'#b91c1c':'#b91c1c'}">${b==null?'-':fmt(b)}</td><td class="trend">${nb}</td><td class="n ${diff==null?'c-flat':(diff>=0?'c-good':'c-bad')}">${diff==null?'-':(diff>0?'+':'')+fmt(diff)}</td></tr></tbody>`;
+ h+=`<tr class="final"><td class="lbl" style="color:#7f1d1d">หลังหักคงเหลือ</td><td class="n" id="ovNetPrev">-</td><td class="n cur" id="ovNetCurrent">-</td><td class="trend" id="ovNetTrend">-</td><td class="n" id="ovNetDiff">-</td></tr></tbody>`;
  el.innerHTML=h;
- $('#ovSummaryNote').textContent='ใช้เฉพาะข้อมูลเงินบำรุงและทะเบียนเจ้าหนี้ (ไม่รวม Planfin) | เงินบำรุงคงเหลือ = เงินคงเหลือยกมา + รับสะสม − จ่ายสะสม | หัก งบลงทุน = รายได้งบลงทุน (P13) สะสม | หัก หนี้สิน = ยอดรวมทะเบียนเจ้าหนี้ ณ สิ้นเดือน | หลังหักคงเหลือ = คงเหลือ − งบลงทุน − หนี้สิน | รายรับรวมไม่รวม P13'+((!hasC||!hasP)?' | ⚠️ บางเดือนยังไม่มีข้อมูลในระบบ':'');
+ $('#ovSummaryNote').innerHTML=`<span>กรอกตัวเลขในช่องของทั้งสองเดือนได้โดยตรง แล้วกดปุ่มบันทึกข้อมูล</span> <button type="button" class="btn btn-green" style="margin-left:10px" onclick="saveOvSummary()">💾 บันทึกข้อมูล</button><div style="margin-top:6px">${'ใช้เฉพาะข้อมูลเงินบำรุงและทะเบียนเจ้าหนี้ (ไม่รวม Planfin) | หลังหักคงเหลือ = เงินบำรุงคงเหลือ − งบลงทุน − หนี้สิน'}</div>${(!hasC||!hasP)?'<div>⚠️ บางเดือนยังไม่มีข้อมูลต้นทางเดิม หากต้องการใช้ตารางนี้ ให้กรอกตัวเลขเองได้เลย</div>':''}`;
+ updateOvSummaryPreview();
+}
+function readOvInput(yy,mm,code){
+ const el=document.querySelector(`.ov-edit[data-year="${yy}"][data-month="${mm}"][data-code="${code}"]`);
+ if(!el || el.value.trim()==='')return null;
+ const n=Number(el.value);return Number.isFinite(n)?n:null;
+}
+function updateOvSummaryPreview(){
+ const y=+$('#fYear').value,m=+$('#fMonth').value;if(!y||!m)return;
+ const [py,pm]=prevPeriod(y,m),vals={};
+ const rows=[['in','up'],['out','down'],['P50','up'],['INV','down'],['P60','down']];
+ rows.forEach(([k,dir])=>{
+  const code={in:'OV_IN',out:'OV_OUT',P50:'OV_P50',INV:'OV_INV',P60:'OV_P60'}[k];
+  const a=readOvInput(py,pm,code),b=readOvInput(y,m,code);vals[k]=[a,b];
+  const diff=a!=null&&b!=null?b-a:null;
+  const pct=a!=null&&b!=null?pctChange(b,a):null;
+  const good=pct==null?true:(dir==='up'?pct>0:pct<0);
+  let badge=pct==null?'<span class="badge b-flat">– ไม่มีข้อมูลเทียบ</span>':Math.abs(pct)<0.005?'<span class="badge b-flat">– คงที่ 0.00%</span>':`<span class="badge ${good?'b-good':'b-bad'}">${pct>0?'↑ เพิ่มขึ้น':'↓ ลดลง'} ${fmt(Math.abs(pct))}%</span>`;
+  const te=$('#ovTrend_'+k),de=$('#ovDiff_'+k);if(te)te.innerHTML=badge;
+  if(de){de.textContent=diff==null?'-':(diff>0?'+':'')+fmt(diff);de.className='n '+(diff==null||Math.abs(diff)<0.005?'c-flat':good?'c-good':'c-bad');}
+ });
+ const net=i=>[vals.P50[i],vals.INV[i],vals.P60[i]].some(x=>x==null)?null:vals.P50[i]-vals.INV[i]-vals.P60[i];
+ const a=net(0),b=net(1),diff=a!=null&&b!=null?b-a:null,pct=a!=null&&b!=null?pctChange(b,a):null;
+ $('#ovNetPrev').textContent=a==null?'-':fmt(a);$('#ovNetCurrent').textContent=b==null?'-':fmt(b);
+ $('#ovNetDiff').textContent=diff==null?'-':(diff>0?'+':'')+fmt(diff);
+ $('#ovNetTrend').innerHTML=pct==null?'<span class="badge b-flat">– ไม่มีข้อมูลเทียบ</span>':Math.abs(pct)<0.005?'<span class="badge b-flat">– คงที่ 0.00%</span>':`<span class="badge ${pct>=0?'b-good':'b-bad'}">${pct>=0?'↑ เพิ่มขึ้น':'↓ ลดลง'} ${fmt(Math.abs(pct))}%</span>`;
+}
+async function saveOvSummary(){
+ const months={};
+ document.querySelectorAll('.ov-edit').forEach(el=>{
+  const y=+el.dataset.year,m=+el.dataset.month,id=y+'_'+m;
+  if(!months[id])months[id]={year:y,month:m,values:{}};
+  months[id].values[el.dataset.code]=el.value.trim()===''?null:Number(el.value);
+ });
+ if(!Object.keys(months).length)return;
+ if(!confirm('ยืนยันบันทึกตัวเลขสรุปภาพรวมการเงินของสองเดือนนี้?'))return;
+ try{await api('saveOvSummary',{months:Object.values(months)});toast('บันทึกข้อมูลสรุปภาพรวมสำเร็จ ✔');}
+ catch(e){toast(e.message||String(e),'err');}
 }
 
 // ---------- ตารางรายรับ/รายจ่ายเงินบำรุง เทียบแผน ----------
