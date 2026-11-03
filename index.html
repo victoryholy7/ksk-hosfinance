@@ -361,6 +361,7 @@ const $=s=>document.querySelector(s);
 const fmt=(x,d=2)=>x==null||isNaN(x)?'-':Number(x).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
 const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
 const n0=x=>x==null?0:x;
+const SUPPORTED_FYS=[2566,2567,2568,2569];
 function curFY(){const d=new Date();return d.getFullYear()+543+(d.getMonth()>=9?1:0);}
 function monthLabel(fy,m){return MONTHS[m-1]+'-'+String((m<=3?fy-1:fy)%100).padStart(2,'0');}
 function ingest(j){D={};P={};CRED=j.creditors||[];COST=j.costBenchmarks||[];RISK_LEVELS=j.riskLevels||[];
@@ -903,14 +904,19 @@ async function login(){
 function logout(){sessionStorage.removeItem('pw');checkLogin();toast('ออกจากระบบแล้ว');}
 
 function buildFilters(){
- const ys=[...new Set([curFY(),...Object.keys(D).map(Number),...CRED.map(r=>r.y),...COST.map(r=>+r.y)])].sort((a,b)=>b-a);
+ // เตรียมปีงบประมาณย้อนหลัง 2566–2569 ให้เลือกได้เสมอ แม้ยังไม่มีข้อมูลในฐานข้อมูล
+ // และรวมปีที่มีข้อมูลจริง/ปีปัจจุบัน/ปีที่มีแผนหรือผลประเมินไว้ด้วย
+ const dataYears=[...Object.keys(D).map(Number),...CRED.map(r=>+r.y),...COST.map(r=>+r.y),...RISK_LEVELS.map(r=>+r.y),...Object.keys(P).map(Number)];
+ const ys=[...new Set([...SUPPORTED_FYS,curFY(),...dataYears.filter(Boolean)])].sort((a,b)=>b-a);
  const keepY=$('#aYear').value,keepM=$('#aMonth').value,keepFY=dashFiltersInitialized?$('#fYear').value:'',keepFM=dashFiltersInitialized?$('#fMonth').value:'';
+ const latestDataYear=dataYears.filter(Boolean).length?Math.max(...dataYears.filter(Boolean)):curFY();
  $('#fYear').innerHTML=ys.map(y=>`<option value="${y}">ปีงบ ${y}</option>`).join('');
  $('#aYear').innerHTML=ys.map(y=>`<option value="${y}">ปีงบ ${y}</option>`).join('');
  const keepPY=$('#planYear')?.value;if($('#planYear')){$('#planYear').innerHTML=ys.map(y=>`<option value="${y}">ปีงบ ${y}</option>`).join('');if(keepPY&&ys.includes(+keepPY))$('#planYear').value=keepPY;}
  $('#aMonth').innerHTML=MONTHS.map((x,i)=>`<option value="${i+1}">${x}</option>`).join('');
- if(keepY&&ys.includes(+keepY))$('#aYear').value=keepY; if(keepM)$('#aMonth').value=keepM;
- if(keepFY&&ys.includes(+keepFY))$('#fYear').value=keepFY;
+ if(keepY&&ys.includes(+keepY))$('#aYear').value=keepY;else $('#aYear').value=String(curFY());
+ if(keepM)$('#aMonth').value=keepM;
+ if(keepFY&&ys.includes(+keepFY))$('#fYear').value=keepFY;else $('#fYear').value=String(ys.includes(latestDataYear)?latestDataYear:ys[0]);
  const fy=+$('#fYear').value;refreshDashMonthOptions(keepFM);const avail=(D[fy]?Object.keys(D[fy]).map(Number):[]);if(keepFM&&avail.includes(+keepFM))$('#fMonth').value=keepFM;else $('#fMonth').value=String(avail.length?Math.max(...avail):12);
  dashFiltersInitialized=true;fillMonthForm();fillLevelForm();populateAllDashboardSelectors();if(document.querySelector('#planForm')&&!document.querySelector('#planForm input'))buildPlanForm();else fillPlanForm();
 }
