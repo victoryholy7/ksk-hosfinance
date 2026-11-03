@@ -492,7 +492,7 @@ function renderOvSummary(){
  const el=$('#ovSummary');if(!el)return;
  const y=+$('#fYear').value,m=+$('#fMonth').value;if(!y||!m)return;
  const [py,pm]=prevPeriod(y,m),hasC=monthHasData(y,m),hasP=monthHasData(py,pm);
- const rows=[['ยอดยกมาจากเดือนก่อนหน้า','OPEN','up'],['1. รายรับรวม','in','up'],['2. รายจ่ายรวม','out','down'],['3. เงินบำรุงคงเหลือ','P50','up'],['4. หัก งบลงทุน','INV','down'],['5. หัก หนี้สิน','P60','down']];
+ const rows=[['ยอดยกมา','OPEN','up'],['1. รายรับรวม','in','up'],['2. รายจ่ายรวม','out','down'],['3. เงินบำรุงคงเหลือ','P50','up'],['4. หัก งบลงทุน','INV','down'],['5. หัก หนี้สิน','P60','down']];
  let h=`<thead><tr><th>รายการสรุป</th><th>${fullMonthLabel(py,pm)}</th><th class="cur">${fullMonthLabel(y,m)}</th><th>แนวโน้ม (%)</th><th>ส่วนต่าง</th></tr></thead><tbody>`;
  rows.forEach(([lbl,k])=>{
    const a=ovSummaryValue(py,pm,k),b=ovSummaryValue(y,m,k);
