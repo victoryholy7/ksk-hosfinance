@@ -93,6 +93,9 @@ input.ai-filled{background:linear-gradient(180deg,#ecfdf5,#d1fae5);border-color:
 .sum-t .ov-edit{width:100%;min-width:105px;box-sizing:border-box;padding:5px 7px;border:1px solid #d8d2bd;border-radius:6px;background:rgba(255,255,255,.78);color:#172033;font:600 15px Sarabun,sans-serif;text-align:right;font-variant-numeric:tabular-nums}
 .sum-t td.cur .ov-edit{background:rgba(255,255,255,.65);color:#c2410c;border-color:#e8bd98}
 .sum-t .ov-edit:focus{outline:2px solid rgba(15,138,116,.25);border-color:#0f8a74}
+.sum-t .ov-auto{display:inline-block;min-width:110px;padding:5px 7px;border-radius:6px;background:#edf7f4;color:#14532d;font-weight:700;text-align:right}
+.ov-help,.ov-formula{margin-top:8px;padding:10px 13px;border-radius:10px;line-height:1.75;background:#f0fdfa;border-left:4px solid #0f8a74;color:#164e45}
+.ov-formula{background:#fffbeb;border-left-color:#d4af37;color:#713f12}
 .sum-t tr.final .ov-edit{background:#fff7f5}
 
 .badge{display:inline-block;padding:4px 12px;border-radius:999px;font-size:13px;font-weight:600;white-space:nowrap}
@@ -428,30 +431,42 @@ function populateAllDashboardSelectors(){
  });
 }
 
-// ---------- สรุปภาพรวมเทียบเดือนก่อน ----------
+// ---------- สรุปภาพรวมเทียบเดือนก่อน พร้อมที่มาของยอดยกมา ----------
 const FULL_MONTHS=['ตุลาคม','พฤศจิกายน','ธันวาคม','มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน'];
 function fullMonthLabel(fy,m){return FULL_MONTHS[m-1]+' '+(m<=3?fy-1:fy);}
 function prevPeriod(y,m){return m>1?[y,m-1]:[y-1,12];}
 function monthHasData(y,m){return !!D[y]?.[m]&&Object.keys(D[y][m]).length>0;}
 function monthSum(y,m,g){return GROUPS[g].items.reduce((s,[c])=>s+(Number(v(y,m,codeOf(g,c)))||0),0);}
 function cumCash(yy,mm,code){let s=0;for(let i=1;i<=mm;i++)s+=Number(v(yy,i,code))||0;return s;}
+// รวมกระแสเงินสดตั้งแต่ต้นปีงบประมาณถึงเดือนที่เลือก (ข้อมูล cash จัดเก็บเป็นยอดรายเดือน)
+function cumGroup(yy,mm,group){let s=0;for(let i=1;i<=mm;i++)s+=monthSum(yy,i,group);return s;}
 function cashBalance(yy,mm){
  const open=planFor(yy).OPEN_BAL;if(open==null)return null;
- let inc=0,exp=0;
- for(let i=1;i<=mm;i++){inc+=monthSum(yy,i,'cashIn');exp+=monthSum(yy,i,'cashOut');}
- return open+inc-exp;
+ return Number(open)+cumGroup(yy,mm,'cashIn')-cumGroup(yy,mm,'cashOut');
 }
-// ---------- สรุปภาพรวมเทียบเดือนก่อน: หน้าตาเดิม + กรอกตัวเลขได้ ----------
+// ---------- สรุปภาพรวมเทียบเดือนก่อน: คำนวณยอดยกมาและยอดสะสมอัตโนมัติ ----------
+function ovManual(yy,mm,code){
+ const x=v(yy,mm,code);return x===undefined||x===null||x===''?null:Number(x);
+}
 function ovSummaryValue(yy,mm,k){
- // ถ้ามีข้อมูลที่ผู้ใช้กรอกเอง ให้ใช้ค่านั้นก่อน
- const manualCode={OPEN:'OV_OPEN',in:'OV_IN',out:'OV_OUT',P50:'OV_P50',INV:'OV_INV',P60:'OV_P60'}[k];
- const manual=manualCode ? v(yy,mm,manualCode) : null;
- if(manual!==undefined && manual!==null && manual!=='') return Number(manual);
- // หากยังไม่เคยกรอก ให้แสดงค่าจากระบบเดิมเพื่อไม่ให้ข้อมูลเดิมหาย
- if(!monthHasData(yy,mm)) return null;
- if(k==='in')return monthSum(yy,mm,'cashIn')-(Number(v(yy,mm,'CI_P13'))||0);
- if(k==='out')return monthSum(yy,mm,'cashOut');
- if(k==='P50')return cashBalance(yy,mm);
+ const manualCode={in:'OV_IN',out:'OV_OUT',P50:'OV_P50',INV:'OV_INV',P60:'OV_P60'}[k];
+ const manual=manualCode?ovManual(yy,mm,manualCode):null;
+ if(manual!==null)return manual;
+ if(!monthHasData(yy,mm) && k!=='OPEN')return null;
+ // ยอดยกมาต้นปีงบประมาณดึงจากแผนเงินบำรุงที่บันทึกไว้ ไม่ใช่ยอดสุทธิหลังหักหนี้
+ if(k==='OPEN'){
+  const opening=planFor(yy).OPEN_BAL;
+  return opening===undefined||opening===null||opening===''?null:Number(opening);
+ }
+ // รายรับและรายจ่ายเป็นยอดสะสมตั้งแต่ต้นปีงบประมาณถึงเดือนที่เลือก
+ if(k==='in')return cumGroup(yy,mm,'cashIn');
+ if(k==='out')return cumGroup(yy,mm,'cashOut');
+ // ใช้ยอด P50 จากรายงาน Planfin หากมี มิฉะนั้นคำนวณจากยอดยกมาต้นปี + รับสะสม - จ่ายสะสม
+ if(k==='P50'){
+  const reported=v(yy,mm,'P50');
+  if(reported!==undefined&&reported!==null&&reported!=='')return Number(reported);
+  return cashBalance(yy,mm);
+ }
  if(k==='INV')return cumCash(yy,mm,'CI_P13');
  if(k==='P60')return credVal(yy,mm,'__TOTAL__');
  return null;
@@ -475,49 +490,65 @@ function formatOvInput(el){
  el.value=formatted;
  let seen=0,newPos=formatted.length;
  for(let i=0;i<formatted.length;i++){
-   if(formatted[i]!==',') seen++;
-   if(seen>=before){newPos=i+1;break;}
+  if(formatted[i]!==',')seen++;
+  if(seen>=before){newPos=i+1;break;}
  }
  try{el.setSelectionRange(newPos,newPos);}catch(e){}
 }
 function ovInput(yy,mm,k,value){
- const code={OPEN:'OV_OPEN',in:'OV_IN',out:'OV_OUT',P50:'OV_P50',INV:'OV_INV',P60:'OV_P60'}[k];
+ const code={in:'OV_IN',out:'OV_OUT',INV:'OV_INV',P60:'OV_P60'}[k];
  const val=value==null?'':formatOvNumber(value);
  return `<input class="ov-edit" type="text" inputmode="decimal"
-   aria-label="กรอกข้อมูล ${k} เดือน ${fullMonthLabel(yy,mm)}"
-   data-year="${yy}" data-month="${mm}" data-code="${code}"
-   value="${esc(val)}" placeholder="-" oninput="formatOvInput(this);updateOvSummaryPreview()">`;
+  aria-label="${k} ${fullMonthLabel(yy,mm)}" data-year="${yy}" data-month="${mm}" data-code="${code}"
+  value="${esc(val)}" placeholder="-" oninput="formatOvInput(this);updateOvSummaryPreview()">`;
 }
 function renderOvSummary(){
  const el=$('#ovSummary');if(!el)return;
  const y=+$('#fYear').value,m=+$('#fMonth').value;if(!y||!m)return;
- const [py,pm]=prevPeriod(y,m),hasC=monthHasData(y,m),hasP=monthHasData(py,pm);
- const rows=[['ยอดยกมา','OPEN','up'],['1. รายรับรวม','in','up'],['2. รายจ่ายรวม','out','down'],['3. เงินบำรุงคงเหลือ','P50','up'],['4. หัก งบลงทุน','INV','down'],['5. หัก หนี้สิน','P60','down']];
+ const [py,pm]=prevPeriod(y,m);
+ const rows=[
+  ['เงินคงเหลือยกมาต้นปีงบประมาณ','OPEN','flat'],
+  ['1. รายรับสะสม','in','up'],
+  ['2. รายจ่ายสะสม','out','down'],
+  ['3. เงินบำรุงคงเหลือปลายเดือน','P50','up'],
+  ['4. หัก งบลงทุนที่กันไว้','INV','down'],
+  ['5. หัก หนี้สินและภาระผูกพัน','P60','down']
+ ];
  let h=`<thead><tr><th>รายการสรุป</th><th>${fullMonthLabel(py,pm)}</th><th class="cur">${fullMonthLabel(y,m)}</th><th>แนวโน้ม (%)</th><th>ส่วนต่าง</th></tr></thead><tbody>`;
  rows.forEach(([lbl,k])=>{
-   const a=ovSummaryValue(py,pm,k),b=ovSummaryValue(y,m,k);
-   h+=`<tr><td class="lbl">${lbl}</td><td class="n">${ovInput(py,pm,k,a)}</td><td class="n cur">${ovInput(y,m,k,b)}</td><td class="trend" id="ovTrend_${k}">-</td><td class="n" id="ovDiff_${k}">-</td></tr>`;
+  const a=ovSummaryValue(py,pm,k),b=ovSummaryValue(y,m,k);
+  const av=k==='OPEN'?`<span class="ov-auto" title="ยอดยกมาต้นปีงบประมาณจากแผนเงินบำรุง">${fmt(a)}</span>`:k==='P50'?`<span class="ov-auto" title="คำนวณจากยอดยกมา + รายรับสะสม - รายจ่ายสะสม หรือใช้ยอด P50 จาก Planfin หากมี">${fmt(a)}</span>`:ovInput(py,pm,k,a);
+  const bv=k==='OPEN'?`<span class="ov-auto" title="ยอดยกมาต้นปีงบประมาณจากแผนเงินบำรุง">${fmt(b)}</span>`:k==='P50'?`<span class="ov-auto" title="คำนวณจากยอดยกมา + รายรับสะสม - รายจ่ายสะสม หรือใช้ยอด P50 จาก Planfin หากมี">${fmt(b)}</span>`:ovInput(y,m,k,b);
+  h+=`<tr><td class="lbl">${lbl}</td><td class="n">${av}</td><td class="n cur">${bv}</td><td class="trend" id="ovTrend_${k}">-</td><td class="n" id="ovDiff_${k}">-</td></tr>`;
  });
- h+=`<tr class="final"><td class="lbl" style="color:#7f1d1d">หลังหักคงเหลือ</td><td class="n" id="ovNetPrev">-</td><td class="n cur" id="ovNetCurrent">-</td><td class="trend" id="ovNetTrend">-</td><td class="n" id="ovNetDiff">-</td></tr></tbody>`;
+ h+=`<tr class="final"><td class="lbl" style="color:#7f1d1d">เงินบำรุงคงเหลือสุทธิ</td><td class="n" id="ovNetPrev">-</td><td class="n cur" id="ovNetCurrent">-</td><td class="trend" id="ovNetTrend">-</td><td class="n" id="ovNetDiff">-</td></tr></tbody>`;
  el.innerHTML=h;
- $('#ovSummaryNote').innerHTML=`<span>กรอกตัวเลขในช่องของทั้งสองเดือนได้โดยตรง แล้วกดปุ่มบันทึกข้อมูล</span> <button type="button" class="btn btn-green" style="margin-left:10px" onclick="saveOvSummary()">💾 บันทึกข้อมูล</button><div style="margin-top:6px">${'ใช้เฉพาะข้อมูลเงินบำรุงและทะเบียนเจ้าหนี้ (ไม่รวม Planfin) | หลังหักคงเหลือ = เงินบำรุงคงเหลือ − งบลงทุน − หนี้สิน'}</div>${(!hasC||!hasP)?'<div>⚠️ บางเดือนยังไม่มีข้อมูลต้นทางเดิม หากต้องการใช้ตารางนี้ ให้กรอกตัวเลขเองได้เลย</div>':''}`;
+ const openNow=ovSummaryValue(y,m,'OPEN'),openPrev=ovSummaryValue(py,pm,'OPEN');
+ const sourceNow=planFor(y).OPEN_BAL==null?'ยังไม่ได้บันทึกยอดยกมาต้นปีในแท็บแผนเงินบำรุง':'แผนเงินบำรุง ปีงบประมาณ '+y+' (ช่อง เงินคงเหลือยกมา ณ ต้นปีงบ)';
+ const sourcePrev=planFor(py).OPEN_BAL==null?'ยังไม่มีข้อมูลยอดยกมาต้นปีของปีงบประมาณ '+py:'แผนเงินบำรุง ปีงบประมาณ '+py+' (ช่อง เงินคงเหลือยกมา ณ ต้นปีงบ)';
+ $('#ovSummaryNote').innerHTML=`<div class="ov-help"><b>ที่มาของยอดยกมา</b><br>เดือน ${fullMonthLabel(y,m)}: ${sourceNow} = <b>${fmt(openNow)} บาท</b><br>เดือน ${fullMonthLabel(py,pm)}: ${sourcePrev} = <b>${fmt(openPrev)} บาท</b><br><span>ยอดยกมาต้นปีงบประมาณจะคงเดิมตลอดปีงบประมาณ ส่วนรายรับและรายจ่ายจะสะสมเพิ่มตามเดือนที่เลือก</span></div>
+ <div class="ov-formula"><b>สูตรคำนวณ</b><br>เงินบำรุงคงเหลือปลายเดือน = เงินคงเหลือยกมาต้นปี + รายรับสะสม − รายจ่ายสะสม<br>เงินบำรุงคงเหลือสุทธิ = เงินบำรุงคงเหลือปลายเดือน − งบลงทุนที่กันไว้ − หนี้สินและภาระผูกพัน</div>
+ <div style="margin-top:9px">แก้ไขตัวเลขรายรับสะสม รายจ่ายสะสม งบลงทุน และหนี้สินได้ แล้วกดบันทึกข้อมูล ส่วนยอดยกมาต้นปีดึงจากแท็บแผนเงินบำรุงโดยอัตโนมัติ <button type="button" class="btn btn-green sm" style="margin-left:8px" onclick="saveOvSummary()">💾 บันทึกข้อมูล</button></div>
+ ${[openNow,openPrev].some(x=>x==null)?'<div style="margin-top:6px;color:#b91c1c;font-weight:600">⚠️ ยังไม่มีข้อมูลยอดยกมาต้นปีของบางปีงบประมาณ กรุณาบันทึกในแท็บแผนเงินบำรุงก่อน</div>':''}`;
  updateOvSummaryPreview();
 }
 function readOvInput(yy,mm,code){
  const el=document.querySelector(`.ov-edit[data-year="${yy}"][data-month="${mm}"][data-code="${code}"]`);
- if(!el || el.value.trim()==='')return null;
+ if(!el||el.value.trim()==='')return null;
  const n=Number(el.value.replace(/,/g,''));return Number.isFinite(n)?n:null;
 }
 function updateOvSummaryPreview(){
  const y=+$('#fYear').value,m=+$('#fMonth').value;if(!y||!m)return;
  const [py,pm]=prevPeriod(y,m),vals={};
- const rows=[['OPEN','up'],['in','up'],['out','down'],['P50','up'],['INV','down'],['P60','down']];
+ const rows=[['OPEN','flat'],['in','up'],['out','down'],['P50','up'],['INV','down'],['P60','down']];
  rows.forEach(([k,dir])=>{
   const code={OPEN:'OV_OPEN',in:'OV_IN',out:'OV_OUT',P50:'OV_P50',INV:'OV_INV',P60:'OV_P60'}[k];
-  const a=readOvInput(py,pm,code),b=readOvInput(y,m,code);vals[k]=[a,b];
+  const a=k==='OPEN'||k==='P50'?ovSummaryValue(py,pm,k):readOvInput(py,pm,code);
+  const b=k==='OPEN'||k==='P50'?ovSummaryValue(y,m,k):readOvInput(y,m,code);
+  vals[k]=[a,b];
   const diff=a!=null&&b!=null?b-a:null;
   const pct=a!=null&&b!=null?pctChange(b,a):null;
-  const good=pct==null?true:(dir==='up'?pct>0:pct<0);
+  const good=dir==='flat'?Math.abs(diff||0)<0.005:(dir==='up'?pct>0:pct<0);
   let badge=pct==null?'<span class="badge b-flat">– ไม่มีข้อมูลเทียบ</span>':Math.abs(pct)<0.005?'<span class="badge b-flat">– คงที่ 0.00%</span>':`<span class="badge ${good?'b-good':'b-bad'}">${pct>0?'↑ เพิ่มขึ้น':'↓ ลดลง'} ${fmt(Math.abs(pct))}%</span>`;
   const te=$('#ovTrend_'+k),de=$('#ovDiff_'+k);if(te)te.innerHTML=badge;
   if(de){de.textContent=diff==null?'-':(diff>0?'+':'')+fmt(diff);de.className='n '+(diff==null||Math.abs(diff)<0.005?'c-flat':good?'c-good':'c-bad');}
